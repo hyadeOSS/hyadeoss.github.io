@@ -1,103 +1,263 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mariowOS - Download</title>
-    <meta name="description" content="Download the latest stable mariowOS, try Insiders or DosVM, or build it yourself.">
-    <meta name="color-scheme" content="dark light">
-    <link rel="icon" type="image/svg+xml" href="../theme/icons/mariowos.svg">
     <script src="../theme/accent.js"></script>
     <script src="../theme/mw-theme.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400..500,0,0&icon_names=apps,arrow_back,arrow_forward,bolt,brightness_auto,build,close,code,crop_square,dark_mode,devices,download,edit_square,expand_more,extension,forum,group,hub,layers,light_mode,lock,menu,menu_book,palette,remove,rocket_launch,security,shield,speed,storefront,terminal,tune,verified_user,visibility,warning,web&display=block">
     <link rel="stylesheet" href="../theme/fonts/fonts.css">
     <link rel="stylesheet" href="../theme/mw-design.css">
-    <link rel="stylesheet" href="../theme/mw.css">
+    <link rel="stylesheet" href="../theme/halo.css">
+    <style>
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            position: relative;
+            z-index: 10;
+            flex: 1 0 auto;
+            width: 100%;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 8.5rem var(--gutter) 4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 3.5rem;
+        }
+
+        /* Notice strip */
+        .notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.4rem;
+            padding: 1.1rem 1.4rem;
+        }
+
+        .notice-tag {
+            flex-shrink: 0;
+            padding: 0.3rem 0.6rem;
+            background: var(--ink);
+            color: #000;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .notice h3 {
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.3rem;
+        }
+
+        .notice p {
+            font-size: 0.78rem;
+            line-height: 1.6;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero h1 {
+            margin-bottom: 2.2rem;
+        }
+
+        .hero .btn-primary {
+            padding: 1.15rem 2.4rem;
+            font-size: 0.85rem;
+        }
+
+        .fine-print {
+            margin-top: 1.4rem;
+            max-width: 62ch;
+            font-size: 0.72rem;
+            line-height: 1.7;
+        }
+
+        .fine-print span {
+            color: var(--ink-dim);
+            padding: 0 0.4rem;
+        }
+
+        /* Two option panels */
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .options .panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .options h2 {
+            margin-bottom: 0.6rem;
+        }
+
+        .options h2 .scan {
+            font-weight: 800;
+        }
+
+        .options p {
+            margin-bottom: 1.6rem;
+        }
+
+        .options .btn-group {
+            justify-content: flex-start;
+            margin-top: auto;
+        }
+
+        @media (max-width: 900px) {
+            main {
+                padding-top: 6rem;
+                gap: 2.6rem;
+            }
+
+            .notice {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            .options .panel {
+                text-align: center;
+            }
+
+            .options .btn-group {
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../theme/mw-skin.css">
 </head>
+
 <body>
-    <header class="mw-bar">
-        <a class="mw-brand" href="../index.html" aria-label="mariowOS home"><img src="../theme/icons/mariowos.svg" alt="">mariowOS</a>
-        <nav class="mw-nav" aria-label="Main">
-            <a href="../index.html">Home</a>
-            <a href="../get/index.html" aria-current="page">Download</a>
-            <a href="../developers/index.html">Developers</a>
-            <a href="../security/index.html">Security</a>
-        </nav>
-        <div class="mw-bar-end">
-            <a class="icon-btn" href="https://github.com/mariowOS/" target="_blank" rel="noopener" aria-label="GitHub"><img src="../images/github.webp" alt=""></a>
-            <a class="icon-btn" href="https://discord.gg/QxjDUeQGMu" target="_blank" rel="noopener" aria-label="Discord"><img src="../images/discord.webp" alt=""></a>
-            <span class="mw-bar-sep" aria-hidden="true"></span>
-            <button class="icon-btn" type="button" data-theme-toggle><span class="material-symbols-outlined " aria-hidden="true">dark_mode</span></button>
-            <button class="icon-btn mw-menu-btn" type="button" data-menu-toggle aria-label="Menu" aria-expanded="false"><span class="material-symbols-outlined " aria-hidden="true">menu</span></button>
+    <canvas class="bg-dust" aria-hidden="true"></canvas>
+    <svg class="orbits" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="none" stroke="currentColor">
+            <circle cx="1720" cy="380" r="620" stroke-opacity="0.07" />
+            <circle cx="1720" cy="380" r="700" stroke-opacity="0.04" />
+            <path d="M 1360 0 C 1270 300, 1270 600, 1380 900" stroke-opacity="0.06" />
+        </g>
+    </svg>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="hud-top">
+        <div class="hud-left">
+            <a href="https://mariowos.github.io/" class="brand">
+                <img src="../images/mariowos-icon.png" alt="mariowOS">
+                <span>// System Archive</span>
+                <span class="ticks" aria-hidden="true"><i></i><i></i><i></i></span>
+            </a>
+            <span class="chip">Archive / DL — Download</span>
+        </div>
+        <div class="hud-right">
+            <span class="dot-line" aria-hidden="true"><span></span></span>
+            <span class="slogan">Fast • Smooth • Open • Yours</span>
+            <nav class="socials" aria-label="Community">
+                <a href="https://github.com/mariowOS/" target="_blank" rel="noopener"><img src="../images/github.webp"
+                        alt="GitHub"></a>
+                <a href="https://discord.gg/QxjDUeQGMu" target="_blank" rel="noopener"><img
+                        src="../images/discord.webp" alt="Discord"></a>
+            </nav>
         </div>
     </header>
 
-    <main class="wrap narrow page-top">
-        <div class="notice reveal">
-            <span class="material-symbols-outlined " aria-hidden="true">warning</span>
+    <main>
+        <!-- Notice -->
+        <div class="panel notice fade-element">
+            <span class="notice-tag">Notice</span>
             <div>
                 <h3>Insiders channel updates warning</h3>
-                <p>Due to the latest release the insiders channel will expect slowdowns until we start developing on the new upcoming release.</p>
+                <p>Due to the latest release the insiders channel will expect slowdowns until we start developing on the
+                    new upcoming release.</p>
             </div>
         </div>
 
-        <section class="dl-hero reveal">
-            <span class="tile blue"><span class="material-symbols-outlined " aria-hidden="true">download</span></span>
-            <div class="eyebrow">Stable channel</div>
-            <h1>Ready to make the <span class="gradient-text">switch?</span></h1>
-            <div class="btn-group center">
-                <a href="https://github.com/mariowOS/OTA/raw/refs/heads/main/stable/latest.zip" class="btn btn-primary"><span class="material-symbols-outlined " aria-hidden="true">download</span> Download latest</a>
+        <!-- 1. Ready to make the switch? -->
+        <section class="hero fade-element">
+            <div class="kicker center">Sector DL — Stable channel</div>
+            <h1>Ready to make the<span class="big-word scan">switch?</span></h1>
+            <div class="btn-group">
+                <a href="https://github.com/mariowOS/OTA/raw/refs/heads/main/stable/latest.zip"
+                    class="btn btn-primary">Download latest <span class="btn-arrow">&darr;</span></a>
             </div>
-            <p class="fine-print">This version may prompt you to update when booted for the first time due to continuous updates &middot; Requires node.js and npm to be fully set up on your host</p>
+            <p class="fine-print">
+                This version may prompt you to update when booted for the first time due to continuous updates<span
+                    aria-hidden="true">•</span>Requires node.js and npm to be fully set up on your host
+            </p>
         </section>
 
-        <div class="grid-2" style="margin-top: 40px;">
-            <section class="card option reveal">
-                <span class="tile indigo"><span class="material-symbols-outlined " aria-hidden="true">rocket_launch</span></span>
-                <h3>Need a different taste?</h3>
+        <div class="options">
+            <!-- 2. Need a different taste? -->
+            <section class="panel fade-element">
+                <div class="panel-index"><span>01 / Channels</span><span>ALT</span></div>
+                <h2>Need a different <span class="scan">taste?</span></h2>
                 <p>Try what's next on Insiders, or go back to the classic DosVM build.</p>
                 <div class="btn-group">
-                    <a href="https://github.com/mariowOS/development" class="btn btn-sm">Insiders</a>
-                    <a href="https://github.com/mariowOS/bwcompatibility" class="btn btn-sm">DosVM</a>
+                    <a href="https://github.com/mariowOS/development" class="btn">Insiders</a>
+                    <a href="https://github.com/mariowOS/bwcompatibility" class="btn">DosVM</a>
                 </div>
             </section>
-            <section class="card option reveal">
-                <span class="tile orange"><span class="material-symbols-outlined " aria-hidden="true">build</span></span>
-                <h3>Want to cook yourself?</h3>
+
+            <!-- 3. Want to cook yourself? -->
+            <section class="panel fade-element">
+                <div class="panel-index"><span>02 / Build</span><span>SRC</span></div>
+                <h2>Want to cook <span class="scan">yourself?</span></h2>
                 <p>Join the team on Discord, or fork the repo and build your own.</p>
                 <div class="btn-group">
-                    <a href="https://discord.gg/QxjDUeQGMu" class="btn btn-sm">Work with us <span class="material-symbols-outlined " aria-hidden="true">arrow_forward</span></a>
-                    <a href="https://github.com/mariowOS/development" class="btn btn-sm">Fork our repo</a>
+                    <a href="https://discord.gg/QxjDUeQGMu" class="btn">Work with us <span
+                            class="btn-arrow">&rarr;</span></a>
+                    <a href="https://github.com/mariowOS/development" class="btn">Fork our repo</a>
                 </div>
             </section>
         </div>
     </main>
 
     <footer class="site-footer">
-        <div class="wrap">
-            <div>
-                <div class="signature"><img src="../theme/icons/mariowos.svg" alt="">mariowstech</div>
-                <p>Made with <svg class="heart" viewBox="0 0 24 24" aria-label="love"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> by</p>
-            </div>
-            <div>
-                <div class="footer-title">Team</div>
-                <div class="footer-lists">
-                    <ul><li>@davidjone16</li><li>@erti</li><li>@kevadesu</li></ul>
-                    <ul><li>@kianish</li><li>@diegoolivaa</li><li>and you!</li></ul>
-                </div>
-            </div>
-            <div>
-                <div class="footer-title">Links</div>
-                <div class="footer-links">
-                    <a href="../security/index.html">Security bulletins</a>
-                    <a href="https://mariowstech.gitbook.io/mariowos-docs/" target="_blank" rel="noopener">Documentation</a>
-                    <a href="#">Join beta</a>
-                </div>
-            </div>
+        <div>
+            <div class="signature">mariowstech</div>
+            <p>Made with <svg style="width:11px; vertical-align:middle; fill:currentColor;" viewBox="0 0 24 24"
+                    aria-label="love">
+                    <path
+                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg> by</p>
+        </div>
+        <div class="footer-lists">
+            <ul>
+                <li>@davidjone16</li>
+                <li>@erti</li>
+                <li>@kevadesu</li>
+            </ul>
+            <ul>
+                <li>@kianish</li>
+                <li>@diegoolivaa</li>
+                <li>and you!</li>
+            </ul>
+        </div>
+        <div class="footer-right">
+            <a href="https://mariowos.github.io/security">Security bulletins</a>
+            <a href="#">Join beta</a>
         </div>
     </footer>
+
+    <script src="../theme/halo.js"></script>
     <script src="../theme/mw-site.js"></script>
 </body>
 

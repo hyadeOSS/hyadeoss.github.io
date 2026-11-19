@@ -1,203 +1,1900 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mariowOS - The desktop you know and love, reimagined</title>
-    <meta name="description" content="mariowOS is a fast, smooth, open desktop that runs on top of your existing OS. Beyond every OS, one desktop endures.">
-    <meta name="color-scheme" content="dark light">
-    <link rel="icon" type="image/svg+xml" href="theme/icons/mariowos.svg">
+    <title>mariowOS</title>
     <script src="theme/accent.js"></script>
     <script src="theme/mw-theme.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400..500,0,0&icon_names=apps,arrow_back,arrow_forward,bolt,brightness_auto,build,close,code,crop_square,dark_mode,devices,download,edit_square,expand_more,extension,forum,group,hub,layers,light_mode,lock,menu,menu_book,palette,remove,rocket_launch,security,shield,speed,storefront,terminal,tune,verified_user,visibility,warning,web&display=block">
     <link rel="stylesheet" href="theme/fonts/fonts.css">
     <link rel="stylesheet" href="theme/mw-design.css">
-    <link rel="stylesheet" href="theme/mw.css">
+    <style>
+        :root {
+            --bg: #050505;
+            --ink: #f2f2f2;
+            --ink-sub: #8d8d8d;
+            --ink-dim: #4a4a4a;
+            --line: rgba(var(--mw-ink), 0.14);
+            --line-strong: rgba(var(--mw-ink), 0.35);
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --display: 'JetBrains Mono', ui-monospace, monospace;
+            --mono: 'JetBrains Mono', ui-monospace, monospace;
+            --body: 'JetBrains Mono', ui-monospace, monospace;
+            --gutter: 3rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: var(--ink);
+            color: #000;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: var(--body);
+            overflow: hidden;
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 1px solid var(--ink);
+            outline-offset: 4px;
+        }
+
+        /* ---------- Background layers ---------- */
+        #halo-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            transition: opacity 1.2s var(--ease);
+        }
+
+        .orbits {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orbits * {
+            vector-effect: non-scaling-stroke;
+        }
+
+        .grain {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            pointer-events: none;
+            opacity: 0.09;
+            mix-blend-mode: screen;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.4 -0.2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+        }
+
+        .vignette {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.85) 100%);
+        }
+
+        /* ---------- HUD frame ---------- */
+        .hud {
+            position: fixed;
+            z-index: 100;
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--ink);
+        }
+
+        .hud-tl {
+            top: 1.8rem;
+            left: var(--gutter);
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            text-decoration: none;
+            color: inherit;
+            font-weight: 500;
+        }
+
+        .brand img {
+            height: 16px;
+            filter: grayscale(1) brightness(1.6);
+        }
+
+        .brand .ticks {
+            display: inline-flex;
+            gap: 3px;
+            margin-left: 0.3rem;
+        }
+
+        .brand .ticks i {
+            width: 5px;
+            height: 5px;
+            background: var(--ink);
+        }
+
+        .brand .ticks i:nth-child(2) {
+            opacity: 0.6;
+        }
+
+        .brand .ticks i:nth-child(3) {
+            opacity: 0.3;
+        }
+
+        .chip {
+            align-self: flex-start;
+            padding: 0.35rem 3.2rem 0.35rem 0.8rem;
+            border: 1px solid var(--line-strong);
+            border-radius: 999px;
+            color: var(--ink-sub);
+            background: linear-gradient(90deg, rgba(var(--mw-ink), 0.08), transparent);
+            transition: color 0.4s ease;
+        }
+
+        .hud-tr {
+            top: 1.8rem;
+            right: var(--gutter);
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .dot-line {
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .dot-line::before,
+        .dot-line::after {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border: 1px solid var(--ink);
+            border-radius: 50%;
+        }
+
+        .dot-line::after {
+            background: var(--ink);
+            width: 5px;
+            height: 5px;
+        }
+
+        .dot-line span {
+            display: block;
+            width: 9rem;
+            height: 1px;
+            background: var(--line-strong);
+        }
+
+        .socials {
+            display: flex;
+            gap: 1rem;
+            padding-left: 1.2rem;
+            border-left: 1px solid var(--line);
+        }
+
+        .socials a {
+            display: flex;
+        }
+
+        .socials img {
+            height: 16px;
+            filter: grayscale(1) brightness(2);
+            opacity: 0.55;
+            transition: opacity 0.3s ease;
+        }
+
+        .socials a:hover img {
+            opacity: 1;
+        }
+
+        .hud-bl {
+            bottom: 1.6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 1.1rem;
+        }
+
+        .hud-bl b {
+            font-weight: 500;
+            white-space: nowrap;
+            min-width: 7.5em;
+        }
+
+        .sector-track {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .sector-track::before {
+            content: "";
+            width: 4.5rem;
+            height: 1px;
+            background: var(--line-strong);
+            order: 0;
+        }
+
+        .sector-track i {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--ink-dim);
+            transition: background 0.4s ease, transform 0.4s var(--ease);
+        }
+
+        .sector-track i.on {
+            background: var(--ink);
+            transform: scale(1.6);
+        }
+
+        .hud-bl,
+        .hud-bleft,
+        .hud-br {
+            transition: opacity 0.5s ease;
+        }
+
+        body.at-end .hud-bl,
+        body.at-end .hud-bleft,
+        body.at-end .hud-br {
+            opacity: 0;
+        }
+
+        .hud-br {
+            bottom: 1.6rem;
+            right: var(--gutter);
+            color: var(--ink-sub);
+        }
+
+        .hud-bleft {
+            bottom: 1.6rem;
+            left: var(--gutter);
+            color: var(--ink-sub);
+        }
+
+        /* Right rail */
+        .rail {
+            position: fixed;
+            right: calc(var(--gutter) - 0.6rem);
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 1.2rem 0.55rem;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(var(--mw-ink), 0.05), rgba(var(--mw-ink), 0.01));
+        }
+
+        .rail::before,
+        .rail::after {
+            content: "✦";
+            font-size: 0.7rem;
+            color: var(--ink-sub);
+            line-height: 1;
+        }
+
+        .rail button {
+            width: 14px;
+            height: 3px;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            background: var(--ink-dim);
+            transition: background 0.4s ease, width 0.5s var(--ease);
+        }
+
+        .rail button:hover {
+            background: var(--ink-sub);
+        }
+
+        .rail button.active {
+            background: var(--ink);
+            width: 22px;
+        }
+
+        .glitch-blocks {
+            position: fixed;
+            right: calc(var(--gutter) + 1.6rem);
+            top: 50%;
+            transform: translateY(-50%);
+            height: 60vh;
+            width: 70px;
+            z-index: 99;
+            pointer-events: none;
+        }
+
+        .glitch-blocks i {
+            position: absolute;
+            background: var(--ink);
+            transition: opacity 0.12s steps(2);
+        }
+
+        .rail-code {
+            position: fixed;
+            right: calc(var(--gutter) - 0.4rem);
+            bottom: 22vh;
+            z-index: 100;
+            writing-mode: vertical-rl;
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            color: var(--ink-sub);
+        }
+
+        /* ---------- Scroll container ---------- */
+        .scroll-container {
+            height: 100vh;
+            width: 100vw;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            position: relative;
+            z-index: 10;
+            scrollbar-width: none;
+        }
+
+        .scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        section {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 6rem 9%;
+        }
+
+        .fade-element {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1.6s var(--ease), transform 1.6s var(--ease);
+        }
+
+        .fade-element.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ---------- Typography ---------- */
+        h1,
+        h2,
+        h3 {
+            font-family: var(--display);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: clamp(1.4rem, 2.6vw, 2.3rem);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            font-size: 0.92rem;
+            color: var(--ink-sub);
+            line-height: 1.75;
+            margin-bottom: 1.3rem;
+            max-width: 46ch;
+        }
+
+        strong {
+            color: var(--ink);
+            font-weight: 700;
+        }
+
+        .kicker {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--ink-sub);
+            margin-bottom: 1.4rem;
+        }
+
+        .kicker::before {
+            content: "";
+            width: 2rem;
+            height: 1px;
+            background: var(--line-strong);
+        }
+
+        .kicker.center {
+            justify-content: center;
+        }
+
+        .kicker.center::after {
+            content: "";
+            width: 2rem;
+            height: 1px;
+            background: var(--line-strong);
+        }
+
+        /* Scanline / halftone text treatment */
+        .scan {
+            background: repeating-linear-gradient(180deg, var(--ink) 0 2px, rgba(var(--mw-ink), 0.25) 2px 3px, transparent 3px 4px);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            filter: drop-shadow(0 0 18px rgba(var(--mw-ink), 0.25));
+        }
+
+        /* ---------- Intro (banner) ---------- */
+        #intro {
+            padding: 0;
+        }
+
+        .intro-grid {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .intro-left {
+            position: absolute;
+            left: var(--gutter);
+            top: 50%;
+            transform: translateY(-42%);
+            max-width: 34rem;
+            z-index: 2;
+        }
+
+        .intro-left .eyebrow {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--ink-sub);
+            margin-bottom: 0.4rem;
+        }
+
+        .welcome {
+            font-family: var(--display);
+            font-size: clamp(2.6rem, 5.4vw, 5.6rem);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+            text-align: left;
+            margin: 0;
+            transform: scaleY(1.08);
+            transform-origin: left bottom;
+        }
+
+        .block-bar {
+            display: flex;
+            gap: 4px;
+            margin: 1.1rem 0 2.6rem;
+        }
+
+        .block-bar i {
+            width: 22px;
+            height: 7px;
+            background: var(--ink);
+        }
+
+        .block-bar i:nth-child(4) {
+            opacity: 0.55;
+        }
+
+        .block-bar i:nth-child(5) {
+            opacity: 0.3;
+        }
+
+        .block-bar i:nth-child(6) {
+            opacity: 0.12;
+        }
+
+        .intro-left .tagline {
+            color: var(--ink);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            max-width: 24ch;
+        }
+
+        .intro-star {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: clamp(100px, 12vw, 180px);
+            z-index: 1;
+            transform: translate(-50%, -50%);
+            filter: drop-shadow(0 0 30px rgba(var(--mw-ink), 0.35)) grayscale(1);
+            animation: starPulse 7s ease-in-out infinite;
+        }
+
+        @keyframes starPulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: translate(-50%, -52%) scale(1.03) rotate(2deg);
+            }
+        }
+
+        .intro-name {
+            position: absolute;
+            left: calc(50% + min(36vw, 36vh) + 1.5rem);
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: var(--display);
+            font-size: clamp(1.4rem, 2.6vw, 2.5rem);
+            font-weight: 800;
+            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            z-index: 2;
+        }
+
+        .intro-name span {
+            display: block;
+        }
+
+        .intro-name small {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-top: 0.9rem;
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            font-weight: 500;
+            letter-spacing: 0.22em;
+            color: var(--ink-sub);
+        }
+
+        .intro-name small::before {
+            content: "";
+            width: 1.6rem;
+            height: 1px;
+            background: var(--line-strong);
+        }
+
+        .intro-thumbs {
+            position: absolute;
+            left: var(--gutter);
+            bottom: 4.5rem;
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+        }
+
+        .intro-thumbs img {
+            width: 112px;
+            height: 70px;
+            object-fit: cover;
+            filter: grayscale(1) contrast(1.25) brightness(0.85);
+            border: 1px solid var(--line);
+        }
+
+        .intro-thumbs .quote {
+            font-family: var(--display);
+            font-size: 2rem;
+            line-height: 0.6;
+            align-self: flex-start;
+            margin: 0 0.5rem 0 0;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--mono);
+            font-size: 0.62rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--ink-sub);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .scroll-indicator::after {
+            content: "";
+            width: 1px;
+            height: 36px;
+            background: linear-gradient(to bottom, var(--ink), transparent);
+            transform-origin: top;
+            animation: scrollLine 2.2s var(--ease) infinite;
+        }
+
+        @keyframes scrollLine {
+            0% {
+                transform: scaleY(0);
+                opacity: 1;
+            }
+
+            60% {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scaleY(1);
+                opacity: 0;
+            }
+        }
+
+        /* ---------- Frames (bracketed media) ---------- */
+        .frame {
+            position: relative;
+            padding: 10px;
+        }
+
+        .frame::before,
+        .frame::after {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border: 1px solid var(--ink);
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .frame::before {
+            top: 0;
+            left: 0;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .frame::after {
+            bottom: 0;
+            right: 0;
+            border-left: none;
+            border-top: none;
+        }
+
+        .frame-cap {
+            position: absolute;
+            bottom: -1.6rem;
+            left: 10px;
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--ink-sub);
+        }
+
+        .frame-cap.right {
+            left: auto;
+            right: 10px;
+        }
+
+        .mono-img {
+            filter: grayscale(1) contrast(1.15) brightness(0.9);
+            transition: filter 1s var(--ease), transform 0.8s var(--ease);
+        }
+
+        .frame:hover .mono-img {
+            filter: grayscale(0) contrast(1) brightness(1);
+        }
+
+        /* ---------- Warp ---------- */
+        .warp-frame {
+            width: 100%;
+            max-width: 820px;
+            margin-bottom: 3.2rem;
+        }
+
+        .warp-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            position: relative;
+            perspective: 1200px;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1.6s var(--ease), transform 1.6s var(--ease);
+        }
+
+        .warp-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .warp-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 2.6s var(--ease);
+        }
+
+        .warp-old {
+            z-index: 2;
+            opacity: 1;
+            transform: scale(1) translateZ(0) rotateX(0);
+            filter: blur(0) grayscale(1) contrast(1.2);
+        }
+
+        .warp-new {
+            z-index: 1;
+            opacity: 0;
+            transform: scale(0.85) translateZ(-200px) rotateX(10deg);
+            filter: blur(20px) grayscale(1);
+        }
+
+        .warp-container.warped .warp-old {
+            opacity: 0;
+            transform: scale(1.25) translateZ(250px) rotateX(-12deg);
+            filter: blur(25px) grayscale(1);
+            pointer-events: none;
+        }
+
+        .warp-container.warped .warp-new {
+            opacity: 1;
+            transform: scale(1) translateZ(0) rotateX(0);
+            filter: blur(0) grayscale(0.85) contrast(1.1);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 0 1px var(--line);
+        }
+
+        .warp-frame:hover .warp-container.warped .warp-new {
+            filter: blur(0) grayscale(0) contrast(1);
+        }
+
+        #hero-text {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.6s var(--ease), transform 1.6s var(--ease);
+            white-space: nowrap;
+        }
+
+        #hero-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reimagined-wrapper {
+            display: inline-block;
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            vertical-align: bottom;
+            filter: blur(12px);
+            transition: max-width 2s var(--ease), opacity 2s var(--ease), filter 2s var(--ease);
+        }
+
+        .warped-text .reimagined-wrapper {
+            max-width: 640px;
+            opacity: 1;
+            filter: blur(0px);
+        }
+
+        .reimagined-text {
+            display: inline-block;
+            white-space: nowrap;
+            padding-bottom: 0.1em;
+        }
+
+        #hero {
+            overflow-x: clip;
+        }
+
+        /* ---------- Split sections ---------- */
+        .grid-split {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1180px;
+            gap: 5rem;
+        }
+
+        .grid-split.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .text-content {
+            flex: 1;
+        }
+
+        .visual-content {
+            flex: 1.15;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .ui-image {
+            display: block;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .llama-icon {
+            position: absolute;
+            bottom: -28px;
+            left: -28px;
+            width: 76px;
+            z-index: 4;
+            filter: grayscale(1) drop-shadow(0 10px 20px rgba(0, 0, 0, 0.8));
+            animation: floaty 5s ease-in-out infinite;
+        }
+
+        @keyframes floaty {
+
+            0%,
+            100% {
+                translate: 0 0;
+            }
+
+            50% {
+                translate: 0 -10px;
+            }
+        }
+
+        .section-title {
+            width: 100%;
+            max-width: 1180px;
+            margin-bottom: 3.2rem;
+        }
+
+        .section-title h1 {
+            font-size: clamp(1.8rem, 4.2vw, 3.6rem);
+            margin: 0;
+        }
+
+        /* OS topology: host systems wired to mariowOS */
+        .topo {
+            position: relative;
+            width: min(460px, 86vw);
+            aspect-ratio: 1 / 0.92;
+        }
+
+        .topo svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .topo .ring {
+            fill: none;
+            stroke: rgba(var(--mw-ink), 0.08);
+            vector-effect: non-scaling-stroke;
+        }
+
+        .topo .mesh {
+            stroke: rgba(var(--mw-ink), 0.1);
+            stroke-width: 1;
+            vector-effect: non-scaling-stroke;
+        }
+
+        .topo .link {
+            stroke: rgba(var(--mw-ink), 0.45);
+            stroke-width: 1;
+            stroke-dasharray: 3 5;
+            vector-effect: non-scaling-stroke;
+            animation: flow 2.4s linear infinite;
+        }
+
+        .topo .packet {
+            fill: var(--ink);
+        }
+
+        @keyframes flow {
+            to {
+                stroke-dashoffset: -16;
+            }
+        }
+
+        .node {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.55rem;
+            z-index: 1;
+        }
+
+        .node-box {
+            position: relative;
+            width: 74px;
+            height: 74px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(8, 8, 8, 0.92);
+            border: 1px solid var(--line-strong);
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        /* little corner ticks, like the media frames */
+        .node-box::before,
+        .node-box::after {
+            content: "";
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border: 1px solid var(--ink);
+        }
+
+        .node-box::before {
+            top: -4px;
+            left: -4px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .node-box::after {
+            bottom: -4px;
+            right: -4px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .node-box img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            filter: grayscale(1) brightness(1.5);
+            transition: filter 0.4s ease;
+        }
+
+        .node:hover .node-box {
+            border-color: var(--ink);
+            box-shadow: 0 0 30px rgba(var(--mw-ink), 0.15);
+        }
+
+        .node:hover .node-box img {
+            filter: none;
+        }
+
+        .node-label {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--ink-sub);
+            white-space: nowrap;
+        }
+
+        .node.core .node-box {
+            width: 128px;
+            height: 128px;
+            border-color: var(--ink);
+            box-shadow: 0 0 60px rgba(var(--mw-ink), 0.08);
+        }
+
+        .node.core .node-box img {
+            width: 62px;
+            height: 62px;
+            filter: drop-shadow(0 0 18px rgba(var(--mw-ink), 0.4));
+        }
+
+        .node.core .node-label {
+            color: var(--ink);
+        }
+
+        .core-logo {
+            height: 14px;
+            filter: brightness(1.6);
+        }
+
+        /* ---------- Buttons ---------- */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.4rem;
+            justify-content: center;
+        }
+
+        .btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.9rem;
+            padding: 1rem 1.6rem;
+            border: 1px solid var(--line-strong);
+            background: rgba(5, 5, 5, 0.6);
+            color: var(--ink);
+            text-decoration: none;
+            font-family: var(--mono);
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+            transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+        }
+
+        .btn:hover {
+            background: var(--ink);
+            color: #000;
+            border-color: var(--ink);
+        }
+
+        .btn-primary {
+            background: var(--ink);
+            color: #000;
+            border-color: var(--ink);
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: var(--ink);
+        }
+
+        .btn-arrow {
+            display: inline-block;
+            transition: transform 0.4s var(--ease);
+        }
+
+        .btn:hover .btn-arrow {
+            transform: translateX(4px);
+        }
+
+        /* ---------- Develop / CTA ---------- */
+        .big-word {
+            display: block;
+            font-size: clamp(2.6rem, 8vw, 7rem);
+            line-height: 1.05;
+            margin-top: 0.6rem;
+        }
+
+        .center-copy {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .center-copy p {
+            text-align: center;
+        }
+
+        footer {
+            width: 100%;
+            max-width: 1180px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: end;
+            gap: 2rem;
+            margin-top: auto;
+            border-top: 1px solid var(--line);
+            padding-top: 1.8rem;
+            padding-bottom: 2.5rem;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+        }
+
+        footer .made {
+            font-family: var(--display);
+            font-size: 1.05rem;
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.72rem;
+        }
+
+        .footer-lists {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .footer-lists ul {
+            list-style: none;
+            color: var(--ink-sub);
+        }
+
+        .footer-lists li {
+            margin-bottom: 0.45rem;
+        }
+
+        .footer-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .footer-right a {
+            color: var(--ink-sub);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            transition: color 0.3s ease;
+        }
+
+        .footer-right a:hover {
+            color: var(--ink);
+        }
+
+        /* The maker's name keeps its own typeface */
+        .signature {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: 0.01em;
+        }
+
+        footer .made.signature {
+            font-family: 'Poppins', sans-serif;
+            text-transform: none;
+            letter-spacing: 0.01em;
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .hud-bleft.signature {
+            font-size: 0.78rem;
+            color: var(--ink);
+        }
+
+        /* ---------- Mobile ---------- */
+        @media (max-width: 1100px) {
+
+            .dot-line,
+            .hud-br,
+            .hud-bleft {
+                display: none;
+            }
+        }
+
+        @media (max-width: 900px) {
+            :root {
+                --gutter: 1.25rem;
+            }
+
+            .hud-tl {
+                top: 1.2rem;
+            }
+
+            .hud-tr {
+                top: 1.2rem;
+            }
+
+            .chip,
+            .rail,
+            .rail-code,
+            .glitch-blocks,
+            .socials {
+                border: none;
+                padding-left: 0;
+            }
+
+            .chip,
+            .rail,
+            .rail-code,
+            .glitch-blocks {
+                display: none;
+            }
+
+            .hud-bl {
+                bottom: 1rem;
+            }
+
+            .slogan,
+            .brand > span:not(.ticks),
+            .warp-frame .frame-cap.right {
+                display: none;
+            }
+
+            .sector-track::before {
+                width: 2rem;
+            }
+
+            section {
+                padding: 5.5rem 1.25rem 4rem;
+            }
+
+            /* Intro stacks vertically */
+            .intro-left {
+                top: 6.5rem;
+                transform: none;
+                left: var(--gutter);
+                right: var(--gutter);
+            }
+
+            .block-bar {
+                margin: 0.8rem 0 1.2rem;
+            }
+
+            .intro-star {
+                top: 56%;
+            }
+
+            .intro-name {
+                top: auto;
+                bottom: 8.5rem;
+                left: auto;
+                right: var(--gutter);
+                transform: none;
+            }
+
+            .intro-thumbs {
+                display: none;
+            }
+
+            .scroll-indicator {
+                display: none;
+            }
+
+            .grid-split,
+            .grid-split.reverse {
+                flex-direction: column;
+                gap: 2.2rem;
+                text-align: center;
+            }
+
+            .text-content p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .kicker {
+                justify-content: center;
+            }
+
+            .kicker::after {
+                content: "";
+                width: 2rem;
+                height: 1px;
+                background: var(--line-strong);
+            }
+
+            p {
+                font-size: 0.93rem;
+                margin-bottom: 0.9rem;
+            }
+
+            .section-title {
+                margin-bottom: 1.6rem;
+            }
+
+            .section-title h1 {
+                text-align: center;
+            }
+
+            #hero-text {
+                white-space: normal;
+            }
+
+            .reimagined-wrapper {
+                display: block;
+                max-width: 100% !important;
+                margin-top: 0.4rem;
+            }
+
+            .warp-frame {
+                margin-bottom: 2rem;
+            }
+
+            .topo {
+                width: min(250px, 70vw);
+            }
+
+            .grid-split.reverse:has(.topo) {
+                gap: 1.6rem;
+            }
+
+            .node {
+                gap: 0.35rem;
+            }
+
+            .node-label {
+                font-size: 0.5rem;
+            }
+
+            .node-box {
+                width: 46px;
+                height: 46px;
+            }
+
+            .node-box img {
+                width: 24px;
+                height: 24px;
+            }
+
+            .node.core .node-box {
+                width: 76px;
+                height: 76px;
+            }
+
+            .node.core .node-box img {
+                width: 38px;
+                height: 38px;
+            }
+
+            .core-logo {
+                height: 11px;
+            }
+
+            .llama-icon {
+                width: 50px;
+                bottom: -18px;
+                left: -8px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+                max-width: 280px;
+                margin: 1.6rem auto 0;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            footer {
+                grid-template-columns: 1fr;
+                text-align: center;
+                justify-items: center;
+                gap: 1.2rem;
+                padding-bottom: 3.2rem;
+            }
+
+            .footer-lists {
+                gap: 2rem;
+            }
+
+            .footer-right {
+                text-align: center;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .scroll-container {
+                scroll-behavior: auto;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="theme/mw-skin.css">
 </head>
+
 <body>
-    <header class="mw-bar">
-        <a class="mw-brand" href="index.html" aria-label="mariowOS home"><img src="theme/icons/mariowos.svg" alt="">mariowOS</a>
-        <nav class="mw-nav" aria-label="Main">
-            <a href="index.html" aria-current="page">Home</a>
-            <a href="get/index.html">Download</a>
-            <a href="developers/index.html">Developers</a>
-            <a href="security/index.html">Security</a>
-        </nav>
-        <div class="mw-bar-end">
-            <a class="icon-btn" href="https://github.com/mariowOS/" target="_blank" rel="noopener" aria-label="GitHub"><img src="images/github.webp" alt=""></a>
-            <a class="icon-btn" href="https://discord.gg/QxjDUeQGMu" target="_blank" rel="noopener" aria-label="Discord"><img src="images/discord.webp" alt=""></a>
-            <span class="mw-bar-sep" aria-hidden="true"></span>
-            <button class="icon-btn" type="button" data-theme-toggle><span class="material-symbols-outlined " aria-hidden="true">dark_mode</span></button>
-            <button class="icon-btn mw-menu-btn" type="button" data-menu-toggle aria-label="Menu" aria-expanded="false"><span class="material-symbols-outlined " aria-hidden="true">menu</span></button>
-        </div>
+    <!-- Background -->
+    <canvas id="halo-canvas" aria-hidden="true"></canvas>
+    <svg class="orbits" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="none" stroke="currentColor">
+            <circle cx="-120" cy="520" r="620" stroke-opacity="0.07" />
+            <circle cx="-120" cy="520" r="700" stroke-opacity="0.04" />
+            <path d="M 240 0 C 330 300, 330 600, 220 900" stroke-opacity="0.06" />
+            <line x1="430" y1="560" x2="560" y2="420" stroke-opacity="0.22" />
+        </g>
+        <circle cx="430" cy="560" r="3" fill="currentColor" fill-opacity="0.6" />
+    </svg>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- HUD frame -->
+    <header class="hud hud-tl">
+        <a href="#" class="brand">
+            <img src="images/mariowos-icon.png" alt="mariowOS">
+            <span>// System Archive</span>
+            <span class="ticks" aria-hidden="true"><i></i><i></i><i></i></span>
+        </a>
+        <span class="chip" id="hud-chip">Archive / 001</span>
     </header>
 
-    <main>
-        <!-- Hero -->
-        <section class="wrap hero">
-            <img class="logo-tile" src="theme/icons/mariowos.svg" alt="mariowOS">
-            <div class="eyebrow">mariowOS 2 &middot; Tiles edition</div>
-            <h1>The desktop you know and love, <span class="gradient-text">reimagined.</span></h1>
-            <p class="lead">Beyond every OS, one desktop endures. Fast, smooth, open and yours.</p>
-            <div class="btn-group center">
-                <a href="get/index.html" class="btn btn-primary"><span class="material-symbols-outlined " aria-hidden="true">download</span> Get mariowOS</a>
-                <a href="https://discord.gg/QxjDUeQGMu" class="btn">Work with us <span class="material-symbols-outlined " aria-hidden="true">arrow_forward</span></a>
-            </div>
-            <div class="hero-shot">
-                <div class="window">
-                    <div class="window-bar"><span>mariowOS</span><span class="grow"></span><span class="cap"><i><span class="material-symbols-outlined " aria-hidden="true">remove</span></i><i><span class="material-symbols-outlined " aria-hidden="true">crop_square</span></i><i><span class="material-symbols-outlined " aria-hidden="true">close</span></i></span></div>
-                    <div class="window-body compare" id="compare" data-view="new">
-                        <img class="new" src="images/desktopnew.png" alt="The new mariowOS desktop" width="1237" height="696">
-                        <img class="old" src="images/desktopold.png" alt="The old DosVM-based mariowOS desktop" width="1237" height="696">
-                    </div>
+    <div class="hud hud-tr">
+        <span class="dot-line" aria-hidden="true"><span></span></span>
+        <span class="slogan">Fast • Smooth • Open • Yours</span>
+        <nav class="socials" aria-label="Community">
+            <a href="https://github.com/mariowOS/" target="_blank" rel="noopener"><img src="images/github.webp"
+                    alt="GitHub"></a>
+            <a href="https://discord.gg/QxjDUeQGMu" target="_blank" rel="noopener"><img src="images/discord.webp"
+                    alt="Discord"></a>
+        </nav>
+    </div>
+
+    <div class="hud hud-bl" aria-hidden="true">
+        <b id="hud-sector">Sector / 01</b>
+        <span class="sector-track" id="sector-track"></span>
+    </div>
+    <div class="hud hud-bleft signature" aria-hidden="true">mariowstech</div>
+    <div class="hud hud-br" aria-hidden="true">Web • Open • Ascending</div>
+
+    <nav class="rail" aria-label="Sections"></nav>
+    <div class="rail-code" aria-hidden="true">MOS-026</div>
+    <div class="glitch-blocks" id="glitch" aria-hidden="true"></div>
+
+    <div class="scroll-container">
+        <!-- Section 1: Intro / banner -->
+        <section id="intro" data-label="Welcome">
+            <div class="intro-grid">
+                <div class="intro-left">
+                    <div class="eyebrow">mariowOS — Tiles edition</div>
+                    <h1 class="welcome scan">Welcome</h1>
+                    <div class="block-bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <p class="tagline">Beyond every OS, one desktop endures.</p>
                 </div>
-                <div class="shot-tools">
-                    <div class="seg" data-seg="#compare" role="group" aria-label="Compare designs">
-                        <button type="button" class="on" data-view="new" aria-pressed="true">Tiles</button>
-                        <button type="button" data-view="old" aria-pressed="false">Old desktop</button>
+
+                <img src="images/tristar.png" alt="" class="intro-star">
+
+                <div class="intro-name" aria-hidden="true">
+                    <span>Unified</span>
+                    <small>DVM - PJKAGEROU</small>
+                </div>
+
+                <div class="intro-thumbs" aria-hidden="true">
+                    <span class="quote">“</span>
+                    <img src="images/desktopnew.png" alt="">
+                    <img src="images/apps.png" alt="">
+                </div>
+
+                <div class="scroll-indicator">Scroll</div>
+            </div>
+        </section>
+
+        <!-- Section 2: The Warp -->
+        <section id="hero" data-label="Reimagined">
+            <div class="frame warp-frame">
+                <div class="warp-container" id="warp-demo">
+                    <img src="images/desktopold.png" alt="Old Design" class="warp-image warp-old">
+                    <img src="images/desktopnew.png" alt="New Design" class="warp-image warp-new">
+                </div>
+                <span class="frame-cap">IMG-02 / desktop.old → desktop.new</span>
+                <span class="frame-cap right">Hover to reveal colour</span>
+            </div>
+            <h1 id="hero-text">
+                The desktop you know and love<span class="reimagined-wrapper"><span class="reimagined-text scan">&nbsp;reimagined.</span></span>
+            </h1>
+        </section>
+
+        <!-- Section 3: Tiles & Llama -->
+        <section data-label="Tiles">
+            <div class="section-title fade-element">
+                <div class="kicker">Sector 03 — New desktop</div>
+                <h1 class="scan" style="text-align:left;">Welcome, Tiles!</h1>
+            </div>
+            <div class="grid-split fade-element">
+                <div class="text-content">
+                    <p><strong>Accessible, fast, smooth, customizable.</strong><br> Our new desktop is twice as fast as
+                        the old DosVM-based mariowOS. And looks better, too.</p>
+                    <p>Aesthetically pleasant blurs, refined design language across applications and oh, we got
+                        animations too.</p>
+                    <p>Deeply integrated with your base OS, wait did we say "base OS?"</p>
+                </div>
+                <div class="visual-content">
+                    <div class="frame">
+                        <img src="images/desktop_reimagined.png" alt="Tiles Desktop" class="ui-image mono-img">
+                        <img src="images/llama.png" alt="Llama" class="llama-icon">
+                        <span class="frame-cap right">IMG-03 / tiles</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Tiles -->
-        <section class="section">
-            <div class="wrap">
-                <div class="split">
-                    <div class="reveal">
-                        <div class="eyebrow">New desktop</div>
-                        <h2>Welcome, Tiles!</h2>
-                        <p><strong>Accessible, fast, smooth, customizable.</strong> Our new desktop is twice as fast as the old DosVM-based mariowOS. And looks better, too.</p>
-                        <p>Aesthetically pleasant blurs, refined design language across applications and oh, we got animations too.</p>
-                        <p>Deeply integrated with your base OS, wait did we say "base OS?"</p>
-                    </div>
-                    <div class="reveal">
-                        <div class="window">
-                            <div class="window-bar"><span>Desktop</span><span class="grow"></span><span class="cap"><i><span class="material-symbols-outlined " aria-hidden="true">remove</span></i><i><span class="material-symbols-outlined " aria-hidden="true">crop_square</span></i><i><span class="material-symbols-outlined " aria-hidden="true">close</span></i></span></div>
-                            <div class="window-body"><img src="images/desktop_reimagined.png" alt="The Tiles desktop" width="905" height="509" loading="lazy"></div>
+        <!-- Section 4: OS Compatibility -->
+        <section data-label="Compatibility">
+            <div class="grid-split reverse fade-element">
+                <div class="text-content">
+                    <div class="kicker">Sector 04 — Host</div>
+                    <h2>We run on top of your existing OS.</h2>
+                    <p>Web based, RAM efficient and is a separate environment, detached from your existing system.</p>
+                    <p>Doesn't matter if you're running an x86, arm or a potato based CPU, mariowOS handles all that
+                        with ease.</p>
+                    <p>Your files are separated, your browser is, your messages are.</p>
+                </div>
+                <div class="visual-content">
+                    <div class="topo" role="img" aria-label="mariowOS runs on Windows, macOS and Linux">
+                        <svg viewBox="0 0 100 92" preserveAspectRatio="none" aria-hidden="true">
+                            <circle class="ring" cx="50" cy="46" r="44" />
+                            <!-- host-to-host mesh -->
+                            <line class="mesh" x1="14" y1="15" x2="86" y2="15" />
+                            <line class="mesh" x1="14" y1="15" x2="50" y2="84" />
+                            <line class="mesh" x1="86" y1="15" x2="50" y2="84" />
+                            <!-- hosts wired into the core -->
+                            <path id="l-win" class="link" d="M14 15 L50 46" />
+                            <path id="l-mac" class="link" d="M86 15 L50 46" />
+                            <path id="l-tux" class="link" d="M50 84 L50 46" />
+                            <circle class="packet" r="0.7">
+                                <animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#l-win" /></animateMotion>
+                            </circle>
+                            <circle class="packet" r="0.7">
+                                <animateMotion dur="2.6s" begin="0.9s" repeatCount="indefinite"><mpath href="#l-mac" /></animateMotion>
+                            </circle>
+                            <circle class="packet" r="0.7">
+                                <animateMotion dur="2.2s" begin="1.6s" repeatCount="indefinite"><mpath href="#l-tux" /></animateMotion>
+                            </circle>
+                        </svg>
+
+                        <div class="node core" style="left:50%; top:50%;">
+                            <div class="node-box"><img src="images/tristar.png" alt=""></div>
+                            <img src="images/mariowos-icon.png" alt="mariowOS" class="core-logo">
+                        </div>
+                        <div class="node" style="left:14%; top:16.3%;">
+                            <div class="node-box"><img src="images/windows.webp" alt="Windows"></div>
+                            <span class="node-label">Windows / x86</span>
+                        </div>
+                        <div class="node" style="left:86%; top:16.3%;">
+                            <div class="node-box"><img src="images/apple.webp" alt="macOS"></div>
+                            <span class="node-label">macOS / arm</span>
+                        </div>
+                        <div class="node" style="left:50%; top:91.3%;">
+                            <div class="node-box"><img src="images/tux.webp" alt="Linux"></div>
+                            <span class="node-label">Linux / potato</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Principles -->
-        <section class="section">
-            <div class="wrap">
-                <div class="section-head center reveal">
-                    <div class="eyebrow">Design</div>
-                    <h2>Graphite glass, calm motion.</h2>
-                    <p>One design language across the desktop and every app.</p>
+        <!-- Section 5: Apps -->
+        <section data-label="Apps">
+            <div class="grid-split fade-element">
+                <div class="text-content">
+                    <div class="kicker">Sector 05 — Applications</div>
+                    <p><strong>Fast, reliable, open-source applications</strong><br> No matter what you must do,
+                        mariowOS is ready to assist all of that. We got a lot of apps to serve you and improve your
+                        productivity.</p>
+                    <p>Need more? We got the store too with community-ran applications.</p>
+                    <p>Need even more?? Well, develop your own with...</p>
                 </div>
-                <div class="grid-3">
-                    <div class="card reveal"><span class="tile blue"><span class="material-symbols-outlined " aria-hidden="true">speed</span></span><h3>Fast</h3><p>Twice as fast as the old DosVM-based mariowOS, and light on RAM.</p></div>
-                    <div class="card reveal"><span class="tile indigo"><span class="material-symbols-outlined " aria-hidden="true">layers</span></span><h3>Glass and blur</h3><p>Aesthetically pleasant blurs and a refined design language, with light and dark themes.</p></div>
-                    <div class="card reveal"><span class="tile purple"><span class="material-symbols-outlined " aria-hidden="true">palette</span></span><h3>Yours</h3><p>Accessible and customizable: pick your accent and make the desktop feel like home.</p></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Compatibility -->
-        <section class="section">
-            <div class="wrap">
-                <div class="split reverse">
-                    <div class="reveal">
-                        <div class="eyebrow">Host</div>
-                        <h2>We run on top of your existing OS.</h2>
-                        <p>Web based, RAM efficient and is a separate environment, detached from your existing system.</p>
-                        <p>Doesn't matter if you're running an x86, arm or a potato based CPU, mariowOS handles all that with ease.</p>
-                        <p>Your files are separated, your browser is, your messages are.</p>
-                    </div>
-                    <div class="reveal">
-                        <div class="topo" role="img" aria-label="mariowOS runs on Windows, macOS and Linux">
-                            <div class="topo-core">
-                                <img src="theme/icons/mariowos.svg" alt="">
-                                <div><b>mariowOS</b><span>A separate environment on top of your OS</span></div>
-                            </div>
-                            <div class="topo-link" aria-hidden="true"><span class="material-symbols-outlined " aria-hidden="true">hub</span></div>
-                            <div class="topo-hosts">
-                                <div class="card topo-host"><span class="tile"><img class="mono" src="images/windows.webp" alt=""></span><b>Windows</b><span>x86</span></div>
-                                <div class="card topo-host"><span class="tile"><img class="mono" src="images/apple.webp" alt=""></span><b>macOS</b><span>arm</span></div>
-                                <div class="card topo-host"><span class="tile"><img src="images/tux.webp" alt=""></span><b>Linux</b><span>potato</span></div>
-                            </div>
-                        </div>
+                <div class="visual-content">
+                    <div class="frame">
+                        <img src="images/apps.png" alt="Apps and Terminal" class="ui-image mono-img">
+                        <span class="frame-cap right">IMG-05 / apps + terminal</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Apps -->
-        <section class="section">
-            <div class="wrap">
-                <div class="split">
-                    <div class="reveal">
-                        <div class="eyebrow">Applications</div>
-                        <h2>Fast, reliable, open-source applications</h2>
-                        <p>No matter what you must do, mariowOS is ready to assist all of that. We got a lot of apps to serve you and improve your productivity.</p>
-                        <p>Need more? We got the store too with community-ran applications.</p>
-                        <p>Need even more?? Well, develop your own with...</p>
-                    </div>
-                    <div class="reveal">
-                        <img src="images/apps.png" alt="Settings, Notes and Terminal windows" width="905" height="660" loading="lazy" style="filter: drop-shadow(0 18px 40px rgba(0,0,0,.4));">
-                    </div>
+        <!-- Section 6: Develop -->
+        <section id="acode" data-label="Develop">
+            <div class="center-copy fade-element">
+                <div class="kicker center">Sector 06 — Developers</div>
+                <h1>Wait! did we hear...<span class="big-word scan">Develop?</span></h1>
+                <p>mariowOS has got you!</p>
+                <div class="btn-group">
+                    <a href="developers/index.html" class="btn btn-primary">Learn more <span
+                            class="btn-arrow">&rarr;</span></a>
+                    <a href="https://mariowstech.gitbook.io/mariowos-docs/" class="btn">Learn even more <span
+                            class="btn-arrow">&rarr;</span></a>
                 </div>
             </div>
         </section>
 
-        <!-- Developers -->
-        <section class="section">
-            <div class="wrap">
-                <div class="card glass cta-band reveal">
-                    <div class="eyebrow">Developers</div>
-                    <h2>Wait! did we hear... <span class="gradient-text">Develop?</span></h2>
-                    <p>mariowOS has got you!</p>
-                    <div class="btn-group center">
-                        <a href="developers/index.html" class="btn btn-primary">Learn more <span class="material-symbols-outlined " aria-hidden="true">arrow_forward</span></a>
-                        <a href="https://mariowstech.gitbook.io/mariowos-docs/" class="btn">Learn even more <span class="material-symbols-outlined " aria-hidden="true">arrow_forward</span></a>
+        <!-- Section 7: CTA & Footer -->
+        <section id="cta" data-label="Switch" style="justify-content: space-between; padding-bottom: 0;">
+            <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+                <div class="center-copy fade-element">
+                    <div class="kicker center">Sector 07 — Transfer</div>
+                    <h1>Ready to make the<span class="big-word scan">switch?</span></h1>
+                    <div class="btn-group">
+                        <a href="get/index.html" class="btn btn-primary">Get mariowOS <span
+                                class="btn-arrow">&rarr;</span></a>
+                        <a href="https://discord.gg/QxjDUeQGMu" class="btn">Work with us <span
+                                class="btn-arrow">&rarr;</span></a>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <!-- Switch -->
-        <section class="section">
-            <div class="wrap">
-                <div class="cta-band reveal">
-                    <h2>Ready to make the <span class="gradient-text">switch?</span></h2>
-                    <div class="btn-group center">
-                        <a href="get/index.html" class="btn btn-primary"><span class="material-symbols-outlined " aria-hidden="true">download</span> Get mariowOS</a>
-                        <a href="https://discord.gg/QxjDUeQGMu" class="btn">Work with us <span class="material-symbols-outlined " aria-hidden="true">arrow_forward</span></a>
-                    </div>
+            <footer class="fade-element">
+                <div>
+                    <div class="made signature">mariowstech</div>
+                    <p>Made with <svg style="width:11px; vertical-align:middle; fill:currentColor;" viewBox="0 0 24 24"
+                            aria-label="love">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg> by</p>
                 </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="site-footer">
-        <div class="wrap">
-            <div>
-                <div class="signature"><img src="theme/icons/mariowos.svg" alt="">mariowstech</div>
-                <p>Made with <svg class="heart" viewBox="0 0 24 24" aria-label="love"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> by</p>
-            </div>
-            <div>
-                <div class="footer-title">Team</div>
                 <div class="footer-lists">
-                    <ul><li>@davidjone16</li><li>@erti</li><li>@kevadesu</li></ul>
-                    <ul><li>@kianish</li><li>@diegoolivaa</li><li>and you!</li></ul>
+                    <ul>
+                        <li>@davidjone16</li>
+                        <li>@erti</li>
+                        <li>@kevadesu</li>
+                    </ul>
+                    <ul>
+                        <li>@kianish</li>
+                        <li>@diegoolivaa</li>
+                        <li>and you!</li>
+                    </ul>
                 </div>
-            </div>
-            <div>
-                <div class="footer-title">Links</div>
-                <div class="footer-links">
-                    <a href="security/index.html">Security bulletins</a>
-                    <a href="https://mariowstech.gitbook.io/mariowos-docs/" target="_blank" rel="noopener">Documentation</a>
+                <div class="footer-right">
+                    <a href="https://mariowos.github.io/security">Security bulletins</a>
                     <a href="#">Join beta</a>
                 </div>
-            </div>
-        </div>
-    </footer>
+            </footer>
+        </section>
+    </div>
+
+    <script>
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const scroller = document.querySelector('.scroll-container');
+
+        /* ---------- Star yin-yang (ported from the mariowOS OOBE welcome screen) ----------
+           750 tiny copies of the three tristar pieces burst out of the logo and settle into a
+           disk; each one is bright or dim depending on which half / eye of the yin-yang it lands
+           in, and the whole disk turns once every 9 seconds. */
+        const canvas = document.getElementById('halo-canvas');
+        const ctx = canvas.getContext('2d');
+
+        const STAR_PATHS = [
+            "M72.9748 4.25183C75.5281 -1.41728 83.4575 -1.41728 86.0108 4.25183L106.728 50.2512C107.428 51.806 108.645 53.061 110.165 53.796L154.899 75.4297C160.347 78.0649 160.347 85.9423 154.899 88.5774L110.165 110.211C108.645 110.946 107.428 112.201 106.728 113.757L86.0108 159.756C83.4575 165.425 75.5281 165.425 72.9748 159.756L52.2574 113.757C51.5571 112.201 50.3404 110.946 48.8206 110.211L4.08662 88.5774C-1.36221 85.9423 -1.36221 78.0649 4.08662 75.4297L48.8206 53.796C50.3404 53.061 51.5571 51.806 52.2574 50.2512L72.9748 4.25183Z",
+            "M98.1534 300.321C100.782 294.908 108.382 294.908 111.01 300.321L131.75 343.038C132.494 344.569 133.744 345.788 135.283 346.477L178.735 365.97C184.431 368.526 184.431 376.736 178.735 379.292L135.283 398.785C133.744 399.474 132.494 400.692 131.75 402.224L111.01 444.94C108.382 450.354 100.782 450.354 98.1534 444.94L77.4139 402.224C76.67 400.692 75.4196 399.474 73.8812 398.785L30.4288 379.292C24.7327 376.736 24.7328 368.526 30.4288 365.97L73.8812 346.477C75.4196 345.788 76.67 344.569 77.4139 343.038L98.1534 300.321Z",
+            "M269.613 33.8688C275.108 21.4695 292.44 21.4695 297.935 33.8688L343.608 136.923C345.105 140.3 347.723 143.035 351.005 144.648L450.201 193.399C461.889 199.144 461.889 216.055 450.201 221.799L351.005 270.55C347.723 272.163 345.105 274.898 343.608 278.275L297.935 381.329C292.44 393.729 275.108 393.729 269.613 381.329L223.94 278.275C222.443 274.898 219.825 272.163 216.543 270.55L117.347 221.799C105.659 216.055 105.659 199.144 117.347 193.399L216.543 144.648C219.825 143.035 222.443 140.3 223.94 136.923L269.613 33.8688Z"
+        ].map(d => new Path2D(d));
+        const START_OFFSETS = [{ x: -30, y: -30 }, { x: -15, y: 35 }, { x: 35, y: -5 }];
+        const SPRITE = 15;           // css px, same as the OOBE .particle-star
+        const SPIN_MS = 48000;       // one full turn (the OOBE spins every 9s; slowed down for the site)
+        const BURST_MS = 2600;       // how long each star takes to fly from the logo to its spot
+        const SPIN_UP_MS = 4000;     // the spin eases in from standstill instead of starting at full speed
+
+        let W, H, DPR, cx, cy, R, particles = [], dust = [], sprites = [];
+        let INK = '255,255,255';
+        const readInk = () => { INK = getComputedStyle(document.documentElement).getPropertyValue('--mw-ink').trim() || '255,255,255'; };
+        readInk();
+        document.addEventListener('mw-theme', () => { readInk(); if (DPR) buildSprites(); if (reduceMotion && DPR) drawHalo(0); });
+        let t0 = null;
+
+        // Pre-render each star piece as a bright and a dim sprite
+        function buildSprites() {
+            sprites = [0, 1, 2].map(g => [`rgb(${INK})`, `rgba(${INK},0.25)`].map(fill => {
+                const c = document.createElement('canvas');
+                c.width = c.height = Math.ceil(SPRITE * DPR);
+                const k = c.getContext('2d');
+                k.scale((SPRITE * DPR) / 459, (SPRITE * DPR) / 459);
+                k.fillStyle = fill;
+                k.fill(STAR_PATHS[g]);
+                return c;
+            }));
+        }
+
+        function initHalo() {
+            DPR = Math.min(window.devicePixelRatio || 1, 2);
+            W = window.innerWidth;
+            H = window.innerHeight;
+            canvas.width = W * DPR;
+            canvas.height = H * DPR;
+            ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+            const mobile = W < 900;
+            cx = W / 2;
+            cy = mobile ? H * 0.56 : H / 2;
+            R = Math.min(W, H) * (mobile ? 0.42 : 0.36);
+            buildSprites();
+
+            const numStars = mobile ? 520 : 750;
+            particles = [];
+            for (let i = 0; i < numStars; i++) {
+                let x, y, r2;
+                do {
+                    x = Math.random() * 2 - 1;
+                    y = Math.random() * 2 - 1;
+                    r2 = x * x + y * y;
+                } while (r2 > 1);
+
+                // Same yin-yang regions as the OOBE
+                const dTop2 = x * x + (y + 0.5) * (y + 0.5);
+                const dBot2 = x * x + (y - 0.5) * (y - 0.5);
+                let isWhite;
+                if (dTop2 <= 0.025) isWhite = true;
+                else if (dBot2 <= 0.025) isWhite = false;
+                else if (dTop2 <= 0.25) isWhite = false;
+                else if (dBot2 <= 0.25) isWhite = true;
+                else isWhite = x <= 0;
+
+                const group = i % 3;
+                particles.push({
+                    group,
+                    white: isWhite,
+                    tx: x,
+                    ty: y,
+                    delay: 400 + group * 700 + Math.random() * 700  // the three pieces shatter one after another
+                });
+            }
+
+            dust = [];
+            for (let i = 0; i < (mobile ? 60 : 120); i++) {
+                dust.push({
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    s: Math.random() * 1.2 + 0.3,
+                    vx: (Math.random() - 0.5) * 0.06,
+                    vy: (Math.random() - 0.5) * 0.06,
+                    a: Math.random() * 0.35 + 0.1
+                });
+            }
+        }
+
+        // Smooth in-and-out so every star glides into place instead of snapping
+        const easeOut = p => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+        let angle = 0;
+        let haloVisible = true;
+
+        function drawHalo(elapsed) {
+            ctx.clearRect(0, 0, W, H);
+
+            for (const d of dust) {
+                if (!reduceMotion) {
+                    d.x = (d.x + d.vx + W) % W;
+                    d.y = (d.y + d.vy + H) % H;
+                }
+                ctx.fillStyle = `rgba(${INK},${d.a})`;
+                ctx.fillRect(d.x, d.y, d.s, d.s);
+            }
+
+            const cos = Math.cos(angle), sin = Math.sin(angle);
+
+            for (const p of particles) {
+                const local = reduceMotion ? 1 : Math.min(Math.max((elapsed - p.delay) / BURST_MS, 0), 1);
+                if (local <= 0) continue;
+                const e = easeOut(local);
+                const o = START_OFFSETS[p.group];
+                const lx = o.x + (p.tx * R - o.x) * e;
+                const ly = o.y + (p.ty * R - o.y) * e;
+                const x = cx + lx * cos - ly * sin;
+                const y = cy + lx * sin + ly * cos;
+                const s = SPRITE * (0.2 + 0.8 * e);
+                ctx.globalAlpha = Math.min(local / 0.6, 1);
+                ctx.drawImage(sprites[p.group][p.white ? 0 : 1], x - s / 2, y - s / 2, s, s);
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        let last = null;
+        function loop(now) {
+            if (t0 === null) t0 = last = now;
+            const elapsed = now - t0;
+            const dt = Math.min(now - last, 50); // cap so a background tab doesn't jump the spin
+            last = now;
+            const ramp = Math.min(elapsed / SPIN_UP_MS, 1);
+            const speed = ramp * ramp * (3 - 2 * ramp); // smoothstep
+            angle += speed * (dt / SPIN_MS) * Math.PI * 2;
+            if (haloVisible) drawHalo(elapsed);
+            if (!reduceMotion) requestAnimationFrame(loop);
+        }
+
+        window.addEventListener('resize', () => {
+            initHalo();
+            if (reduceMotion) drawHalo(0);
+        });
+        initHalo();
+        requestAnimationFrame(loop);
+
+        // The yin-yang belongs to the intro only: fade it out as you scroll away, stop drawing once gone
+        scroller.addEventListener('scroll', () => {
+            const p = Math.min(scroller.scrollTop / (window.innerHeight * 0.6), 1);
+            canvas.style.opacity = (1 - p).toFixed(3);
+            const wasVisible = haloVisible;
+            haloVisible = p < 1;
+            if (haloVisible && !wasVisible && reduceMotion) drawHalo(0);
+        }, { passive: true });
+
+        /* ---------- Reveal + warp ---------- */
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    if (entry.target.id === 'warp-demo') {
+                        setTimeout(() => {
+                            document.getElementById('warp-demo').classList.add('warped');
+                            document.getElementById('hero-text').classList.add('warped-text');
+                        }, 900);
+                    }
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.fade-element, .warp-container, #hero-text').forEach(el => observer.observe(el));
+
+        /* ---------- HUD: rail, sector, archive chip ---------- */
+        const sections = Array.from(document.querySelectorAll('.scroll-container section'));
+        const rail = document.querySelector('.rail');
+        const track = document.getElementById('sector-track');
+        const hudSector = document.getElementById('hud-sector');
+        const hudChip = document.getElementById('hud-chip');
+        const pad = n => String(n).padStart(2, '0');
+
+        const railBtns = sections.map((section, i) => {
+            const b = document.createElement('button');
+            b.setAttribute('aria-label', `Go to section ${i + 1}: ${section.dataset.label || ''}`);
+            b.addEventListener('click', () => section.scrollIntoView({ behavior: 'smooth' }));
+            rail.appendChild(b);
+            return b;
+        });
+        const trackDots = sections.map(() => {
+            const d = document.createElement('i');
+            track.appendChild(d);
+            return d;
+        });
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const i = sections.indexOf(entry.target);
+                railBtns.forEach((b, j) => b.classList.toggle('active', j === i));
+                trackDots.forEach((d, j) => d.classList.toggle('on', j === i));
+                document.body.classList.toggle('at-end', i === sections.length - 1);
+                hudSector.textContent = `Sector / ${pad(i + 1)}`;
+                hudChip.textContent = `Archive / ${String(i + 1).padStart(3, '0')} — ${entry.target.dataset.label || ''}`;
+            });
+        }, { threshold: 0.6 });
+        sections.forEach(s => sectionObserver.observe(s));
+
+        /* ---------- Glitch blocks by the rail ---------- */
+        const glitch = document.getElementById('glitch');
+        const blocks = Array.from({ length: 9 }, () => {
+            const el = document.createElement('i');
+            glitch.appendChild(el);
+            return el;
+        });
+        function shuffleBlocks() {
+            blocks.forEach(el => {
+                const w = 6 + Math.random() * 26;
+                el.style.width = w + 'px';
+                el.style.height = (4 + Math.random() * 12) + 'px';
+                el.style.right = (Math.random() * 40) + 'px';
+                el.style.top = (Math.random() * 100) + '%';
+                el.style.opacity = Math.random() < 0.55 ? (0.25 + Math.random() * 0.75).toFixed(2) : 0;
+            });
+        }
+        shuffleBlocks();
+        if (!reduceMotion) setInterval(shuffleBlocks, 1400);
+    </script>
     <script src="theme/mw-site.js"></script>
 </body>
 

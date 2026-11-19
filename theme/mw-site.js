@@ -1,54 +1,26 @@
-// Shared behaviour for the mariowOS website: theme switcher, mobile menu, reveal on scroll.
+// mariowOS website: adds the theme switch (Dark → Light → Automatic) next to the social icons.
+// The theme itself is handled by mw-theme.js; the colors come from mw-design.css and mw-skin.css.
 (() => {
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ---- Theme switcher: Dark → Light → Auto ---- */
-  const ICONS = { dark: 'dark_mode', light: 'light_mode', auto: 'brightness_auto' };
-  const LABELS = { dark: 'Dark', light: 'Light', auto: 'Automatic' };
+  const ICONS = {
+    dark: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+    light: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+    auto: '<circle cx="12" cy="12" r="8"/><path d="M12 4v16" /><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/>'
+  };
   const NEXT = { dark: 'light', light: 'auto', auto: 'dark' };
-  document.querySelectorAll('[data-theme-toggle]').forEach(btn => {
-    const icon = btn.querySelector('.material-symbols-outlined');
-    const sync = () => {
-      const c = window.mariowOSTheme ? window.mariowOSTheme.get() : 'dark';
-      if (icon) icon.textContent = ICONS[c];
-      btn.setAttribute('aria-label', 'Appearance: ' + LABELS[c] + '. Click to change.');
-      btn.title = 'Appearance: ' + LABELS[c];
-    };
-    btn.addEventListener('click', () => window.mariowOSTheme && window.mariowOSTheme.set(NEXT[window.mariowOSTheme.get()]));
-    document.addEventListener('mw-theme', sync);
-    sync();
-  });
-
-  /* ---- Mobile menu ---- */
-  const menuBtn = document.querySelector('[data-menu-toggle]');
-  const bar = document.querySelector('.mw-bar');
-  if (menuBtn && bar) {
-    menuBtn.addEventListener('click', () => {
-      const open = bar.classList.toggle('open');
-      menuBtn.setAttribute('aria-expanded', open);
-    });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') { bar.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); } });
-    bar.querySelectorAll('.mw-nav a').forEach(a => a.addEventListener('click', () => bar.classList.remove('open')));
-  }
-
-  /* ---- Reveal on scroll (short and calm) ---- */
-  const items = document.querySelectorAll('.reveal');
-  if (reduce || !('IntersectionObserver' in window)) {
-    items.forEach(el => el.classList.add('in'));
-  } else {
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-    items.forEach(el => io.observe(el));
-  }
-
-  /* ---- Segmented controls (before/after) ---- */
-  document.querySelectorAll('[data-seg]').forEach(seg => {
-    const target = document.querySelector(seg.dataset.seg);
-    const buttons = seg.querySelectorAll('button');
-    buttons.forEach(b => b.addEventListener('click', () => {
-      buttons.forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); });
-      if (target) target.dataset.view = b.dataset.view;
-    }));
-  });
+  const NAME = { dark: 'Dark', light: 'Light', auto: 'Automatic' };
+  const host = document.querySelector('.hud-right, .hud-tr');
+  if (!host || !window.mariowOSTheme) return;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'mw-theme-btn';
+  const sync = () => {
+    const c = window.mariowOSTheme.get();
+    btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[c] + '</svg>';
+    btn.title = 'Appearance: ' + NAME[c];
+    btn.setAttribute('aria-label', 'Appearance: ' + NAME[c] + '. Click to change.');
+  };
+  btn.addEventListener('click', () => window.mariowOSTheme.set(NEXT[window.mariowOSTheme.get()]));
+  document.addEventListener('mw-theme', sync);
+  sync();
+  host.appendChild(btn);
 })();
