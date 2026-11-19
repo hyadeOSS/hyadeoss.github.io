@@ -1,479 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mariowOS - Developer Page</title>
+    <meta name="description" content="Develop apps for mariowOS with ACode: run, builder and terminal integration.">
+    <meta name="color-scheme" content="dark light">
+    <link rel="icon" type="image/svg+xml" href="../theme/icons/mariowos.svg">
+    <script src="../theme/accent.js"></script>
+    <script src="../theme/mw-theme.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Poppins:wght@600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="../theme/halo.css">
-    <style>
-        body {
-            overflow: hidden;
-        }
-
-        .scroll-container {
-            position: relative;
-            z-index: 10;
-            height: 100vh;
-            height: 100dvh;
-            overflow-y: scroll;
-            overflow-x: hidden;
-            scroll-snap-type: y mandatory;
-            scroll-behavior: smooth;
-            scrollbar-width: none;
-        }
-
-        .scroll-container::-webkit-scrollbar {
-            display: none;
-        }
-
-        section {
-            position: relative;
-            min-height: 100vh;
-            min-height: 100dvh;
-            scroll-snap-align: start;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 7rem 9% 5rem;
-            text-align: center;
-        }
-
-        section.footer-section {
-            min-height: 0;
-            padding: 0;
-            text-align: left;
-            scroll-snap-align: end;
-        }
-
-        /* Right rail (section nav) */
-        .rail {
-            position: fixed;
-            right: calc(var(--gutter) - 0.6rem);
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.9rem;
-            padding: 1.2rem 0.55rem;
-            border: 1px solid var(--line);
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
-        }
-
-        .rail::before,
-        .rail::after {
-            content: "✦";
-            font-size: 0.7rem;
-            color: var(--ink-sub);
-            line-height: 1;
-        }
-
-        .rail button {
-            width: 14px;
-            height: 3px;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            background: var(--ink-dim);
-            transition: background 0.4s ease, width 0.5s var(--ease);
-        }
-
-        .rail button:hover {
-            background: var(--ink-sub);
-        }
-
-        .rail button.active {
-            background: var(--ink);
-            width: 22px;
-        }
-
-        /* Intro */
-        .intro h1 {
-            font-size: clamp(1.4rem, 3vw, 2.6rem);
-            max-width: 22ch;
-        }
-
-        .intro .big-word {
-            font-size: clamp(2.6rem, 8vw, 7rem);
-        }
-
-        .intro p {
-            margin-top: 1.4rem;
-        }
-
-        .scroll-hint {
-            position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.62rem;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: var(--ink-sub);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .scroll-hint::after {
-            content: "";
-            width: 1px;
-            height: 36px;
-            background: linear-gradient(to bottom, #fff, transparent);
-            transform-origin: top;
-            animation: scrollLine 2.2s var(--ease) infinite;
-        }
-
-        @keyframes scrollLine {
-            0% {
-                transform: scaleY(0);
-                opacity: 1;
-            }
-
-            60% {
-                transform: scaleY(1);
-                opacity: 1;
-            }
-
-            100% {
-                transform: scaleY(1);
-                opacity: 0;
-            }
-        }
-
-        /* Present: "meet ACode" */
-        #present {
-            overflow: hidden;
-        }
-
-        .present-confetti {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .present-copy {
-            position: relative;
-            z-index: 1;
-            opacity: 0;
-            transform: scale(0.92);
-            filter: blur(10px);
-            transition: opacity 1.4s var(--ease), transform 1.4s var(--ease), filter 1.4s var(--ease);
-        }
-
-        #present.is-visible .present-copy {
-            opacity: 1;
-            transform: none;
-            filter: none;
-        }
-
-        .present-copy h2 {
-            font-size: clamp(3rem, 11vw, 9.5rem);
-            font-weight: 800;
-            letter-spacing: -0.05em;
-            line-height: 1;
-        }
-
-        /* ACode */
-        .acode-section h3 {
-            font-size: clamp(1.1rem, 2vw, 1.6rem);
-            margin-bottom: 2.4rem;
-        }
-
-        .acode-frame {
-            width: min(980px, 100%);
-            margin: 0 auto 3rem;
-        }
-
-        .acode-frame img {
-            display: block;
-            width: 100%;
-            height: auto;
-            max-height: 50vh;
-            object-fit: contain;
-        }
-
-        .acode-section p {
-            max-width: 60ch;
-            margin: 0 auto;
-        }
-
-        @media (max-width: 900px) {
-            .rail {
-                display: none;
-            }
-
-            section {
-                padding: 6rem 1.25rem 4rem;
-            }
-
-            .acode-frame {
-                margin-bottom: 2.6rem;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .scroll-container {
-                scroll-behavior: auto;
-            }
-
-            .present-copy {
-                opacity: 1;
-                transform: none;
-                filter: none;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400..500,0,0&icon_names=apps,arrow_back,arrow_forward,bolt,brightness_auto,build,close,code,crop_square,dark_mode,devices,download,edit_square,expand_more,extension,forum,group,hub,layers,light_mode,lock,menu,menu_book,palette,remove,rocket_launch,security,shield,speed,storefront,terminal,tune,verified_user,visibility,warning,web&display=block">
+    <link rel="stylesheet" href="../theme/fonts/fonts.css">
+    <link rel="stylesheet" href="../theme/mw-design.css">
+    <link rel="stylesheet" href="../theme/mw.css">
 </head>
-
 <body>
-    <canvas class="bg-dust" aria-hidden="true"></canvas>
-    <svg class="orbits" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <g fill="none" stroke="#fff">
-            <circle cx="-120" cy="520" r="620" stroke-opacity="0.07" />
-            <circle cx="-120" cy="520" r="700" stroke-opacity="0.04" />
-            <path d="M 240 0 C 330 300, 330 600, 220 900" stroke-opacity="0.06" />
-        </g>
-    </svg>
-    <div class="vignette" aria-hidden="true"></div>
-    <div class="grain" aria-hidden="true"></div>
-
-    <header class="hud-top">
-        <div class="hud-left">
-            <a href="https://mariowos.github.io/" class="brand">
-                <img src="./mariowos-icon.png" alt="mariowOS">
-                <span>// System Archive</span>
-                <span class="ticks" aria-hidden="true"><i></i><i></i><i></i></span>
-            </a>
-            <span class="chip">Archive / DEV — Developers</span>
-        </div>
-        <div class="hud-right">
-            <span class="dot-line" aria-hidden="true"><span></span></span>
-            <span class="slogan">Build • Run • Ship</span>
-            <nav class="socials" aria-label="Community">
-                <a href="https://github.com/mariowOS/" target="_blank" rel="noopener noreferrer"><img
-                        src="./github.webp" alt="GitHub"></a>
-                <a href="https://discord.gg/QxjDUeQGMu" target="_blank" rel="noopener noreferrer"><img
-                        src="./discord.webp" alt="Discord"></a>
-            </nav>
+    <header class="mw-bar">
+        <a class="mw-brand" href="../index.html" aria-label="mariowOS home"><img src="../theme/icons/mariowos.svg" alt="">mariowOS</a>
+        <nav class="mw-nav" aria-label="Main">
+            <a href="../index.html">Home</a>
+            <a href="../get/index.html">Download</a>
+            <a href="../developers/index.html" aria-current="page">Developers</a>
+            <a href="../security/index.html">Security</a>
+        </nav>
+        <div class="mw-bar-end">
+            <a class="icon-btn" href="https://github.com/mariowOS/" target="_blank" rel="noopener" aria-label="GitHub"><img src="../images/github.webp" alt=""></a>
+            <a class="icon-btn" href="https://discord.gg/QxjDUeQGMu" target="_blank" rel="noopener" aria-label="Discord"><img src="../images/discord.webp" alt=""></a>
+            <span class="mw-bar-sep" aria-hidden="true"></span>
+            <button class="icon-btn" type="button" data-theme-toggle><span class="material-symbols-outlined " aria-hidden="true">dark_mode</span></button>
+            <button class="icon-btn mw-menu-btn" type="button" data-menu-toggle aria-label="Menu" aria-expanded="false"><span class="material-symbols-outlined " aria-hidden="true">menu</span></button>
         </div>
     </header>
 
-    <nav class="rail" aria-label="Sections"></nav>
-
-    <div class="scroll-container">
-        <!-- Section 1: Intro -->
-        <section class="intro">
-            <div class="fade-element">
-                <div class="kicker center">Sector DEV — Developers</div>
-                <h1>Did you know you could develop your apps with<span class="big-word scan">mariowOS?</span></h1>
-                <p>yep! that's right! and it's easier than you think!</p>
-            </div>
-            <div class="scroll-hint" aria-hidden="true">Scroll</div>
+    <main>
+        <section class="wrap dev-hero">
+            <div class="eyebrow">Developers</div>
+            <h1>Did you know you could develop your apps with <span class="gradient-text">mariowOS?</span></h1>
+            <p class="lead">yep! that's right! and it's easier than you think!</p>
         </section>
 
-        <!-- Section 2: Present -->
-        <section id="present" aria-label="Introducing ACode">
-            <canvas class="present-confetti" aria-hidden="true"></canvas>
-            <div class="present-copy">
-                <div class="kicker center">for mariowOS devs</div>
-                <h2>meet <span class="scan">ACode</span></h2>
-            </div>
-        </section>
-
-        <!-- Section 3: ACode -->
-        <section class="acode-section">
-            <div class="fade-element" style="width: 100%;">
-                <div class="kicker center">ACode — Editor</div>
-                <h3>ACode, your way of developing</h3>
-                <div class="frame acode-frame">
-                    <img src="./acode.png" alt="ACode Interface" class="mono-img">
-                    <span class="frame-cap">IMG-01 / acode</span>
-                    <span class="frame-cap right">Hover to reveal colour</span>
+        <section class="section">
+            <div class="wrap acode-feature">
+                <div class="section-head center reveal">
+                    <div class="eyebrow">for mariowOS devs</div>
+                    <h2>meet ACode</h2>
+                    <p>ACode, your way of developing</p>
                 </div>
-                <p><strong>Based off monaco</strong>, lets you develop apps for mariowOS and/or web-apps with
-                    run, builder and terminal integration</p>
-                <div class="btn-group" style="margin-top: 2rem;">
-                    <a href="docs/index.html" class="btn btn-primary">Read the docs <span
-                            class="btn-arrow">&rarr;</span></a>
+                <div class="reveal" style="max-width: 920px; margin: 0 auto; width: 100%;">
+                    <div class="window">
+                        <div class="window-bar"><span>ACode</span><span class="grow"></span><span class="cap"><i><span class="material-symbols-outlined " aria-hidden="true">remove</span></i><i><span class="material-symbols-outlined " aria-hidden="true">crop_square</span></i><i><span class="material-symbols-outlined " aria-hidden="true">close</span></i></span></div>
+                        <div class="window-body"><img src="acode.png" alt="ACode interface" width="910" height="490"></div>
+                    </div>
+                </div>
+                <div class="feature-list">
+                    <div class="card reveal"><span class="tile blue"><span class="material-symbols-outlined " aria-hidden="true">code</span></span><h3>Based off Monaco</h3><p>Build apps for mariowOS and/or web-apps with a familiar editor.</p></div>
+                    <div class="card reveal"><span class="tile green"><span class="material-symbols-outlined " aria-hidden="true">terminal</span></span><h3>Terminal built in</h3><p>Run, builder and terminal integration, all in one window.</p></div>
+                    <div class="card reveal"><span class="tile purple"><span class="material-symbols-outlined " aria-hidden="true">storefront</span></span><h3>Ship to the Store</h3><p>Publish your app and share it with the community.</p></div>
+                </div>
+                <div class="btn-group center reveal">
+                    <a href="docs/index.html" class="btn btn-primary">Read the docs <span class="material-symbols-outlined " aria-hidden="true">arrow_forward</span></a>
                     <a href="docs/index.html#first-app" class="btn">Build your first app</a>
                 </div>
             </div>
         </section>
+    </main>
 
-        <!-- Section 4: Footer -->
-        <section class="footer-section">
-            <footer class="site-footer">
-                <div>
-                    <div class="signature">mariowstech</div>
-                    <p>Made with <svg style="width:11px; vertical-align:middle; fill:#fff;" viewBox="0 0 24 24"
-                            aria-label="love">
-                            <path
-                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                        </svg> by</p>
-                </div>
+    <footer class="site-footer">
+        <div class="wrap">
+            <div>
+                <div class="signature"><img src="../theme/icons/mariowos.svg" alt="">mariowstech</div>
+                <p>Made with <svg class="heart" viewBox="0 0 24 24" aria-label="love"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg> by</p>
+            </div>
+            <div>
+                <div class="footer-title">Team</div>
                 <div class="footer-lists">
-                    <ul>
-                        <li>@davidjone16</li>
-                        <li>@erti</li>
-                        <li>@kevadesu</li>
-                    </ul>
-                    <ul>
-                        <li>@kianish</li>
-                        <li>@diegoolivaa</li>
-                        <li>and you!</li>
-                    </ul>
+                    <ul><li>@davidjone16</li><li>@erti</li><li>@kevadesu</li></ul>
+                    <ul><li>@kianish</li><li>@diegoolivaa</li><li>and you!</li></ul>
                 </div>
-                <div class="footer-right">
-                    <a href="https://mariowos.github.io/security">Security bulletins</a>
+            </div>
+            <div>
+                <div class="footer-title">Links</div>
+                <div class="footer-links">
+                    <a href="../security/index.html">Security bulletins</a>
+                    <a href="https://mariowstech.gitbook.io/mariowos-docs/" target="_blank" rel="noopener">Documentation</a>
                     <a href="#">Join beta</a>
                 </div>
-            </footer>
-        </section>
-    </div>
-
-    <script src="../theme/halo.js"></script>
-    <script>
-        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        /* ---------- Rail: the section taking up most of the screen is active ---------- */
-        const scroller = document.querySelector('.scroll-container');
-        const sections = Array.from(document.querySelectorAll('.scroll-container section'));
-        const rail = document.querySelector('.rail');
-        const railBtns = sections.map((section, i) => {
-            const b = document.createElement('button');
-            b.setAttribute('aria-label', `Go to section ${i + 1}`);
-            b.addEventListener('click', () => section.scrollIntoView({ behavior: 'smooth' }));
-            rail.appendChild(b);
-            return b;
-        });
-
-        function updateRail() {
-            const box = scroller.getBoundingClientRect();
-            let active = 0, best = -1;
-            sections.forEach((s, i) => {
-                const r = s.getBoundingClientRect();
-                const visible = Math.max(0, Math.min(r.bottom, box.bottom) - Math.max(r.top, box.top));
-                if (visible > best) { best = visible; active = i; }
-            });
-            // the footer section is short: light it up once we hit the bottom
-            if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2) active = sections.length - 1;
-            railBtns.forEach((b, i) => b.classList.toggle('active', i === active));
-        }
-
-        let ticking = false;
-        scroller.addEventListener('scroll', () => {
-            if (ticking) return;
-            ticking = true;
-            requestAnimationFrame(() => { updateRail(); ticking = false; });
-        }, { passive: true });
-        window.addEventListener('resize', updateRail);
-        updateRail();
-
-        // The halo.js observer watches the window; inside the scroll container we watch it ourselves
-        const fadeObserver = new IntersectionObserver(entries => {
-            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-        }, { root: scroller, threshold: 0.2 });
-        document.querySelectorAll('.fade-element').forEach(el => fadeObserver.observe(el));
-
-        /* ---------- Star-piece confetti for "meet ACode" ---------- */
-        const STAR_PATHS = [
-            "M72.9748 4.25183C75.5281 -1.41728 83.4575 -1.41728 86.0108 4.25183L106.728 50.2512C107.428 51.806 108.645 53.061 110.165 53.796L154.899 75.4297C160.347 78.0649 160.347 85.9423 154.899 88.5774L110.165 110.211C108.645 110.946 107.428 112.201 106.728 113.757L86.0108 159.756C83.4575 165.425 75.5281 165.425 72.9748 159.756L52.2574 113.757C51.5571 112.201 50.3404 110.946 48.8206 110.211L4.08662 88.5774C-1.36221 85.9423 -1.36221 78.0649 4.08662 75.4297L48.8206 53.796C50.3404 53.061 51.5571 51.806 52.2574 50.2512L72.9748 4.25183Z",
-            "M98.1534 300.321C100.782 294.908 108.382 294.908 111.01 300.321L131.75 343.038C132.494 344.569 133.744 345.788 135.283 346.477L178.735 365.97C184.431 368.526 184.431 376.736 178.735 379.292L135.283 398.785C133.744 399.474 132.494 400.692 131.75 402.224L111.01 444.94C108.382 450.354 100.782 450.354 98.1534 444.94L77.4139 402.224C76.67 400.692 75.4196 399.474 73.8812 398.785L30.4288 379.292C24.7327 376.736 24.7328 368.526 30.4288 365.97L73.8812 346.477C75.4196 345.788 76.67 344.569 77.4139 343.038L98.1534 300.321Z",
-            "M269.613 33.8688C275.108 21.4695 292.44 21.4695 297.935 33.8688L343.608 136.923C345.105 140.3 347.723 143.035 351.005 144.648L450.201 193.399C461.889 199.144 461.889 216.055 450.201 221.799L351.005 270.55C347.723 272.163 345.105 274.898 343.608 278.275L297.935 381.329C292.44 393.729 275.108 393.729 269.613 381.329L223.94 278.275C222.443 274.898 219.825 272.163 216.543 270.55L117.347 221.799C105.659 216.055 105.659 199.144 117.347 193.399L216.543 144.648C219.825 143.035 222.443 140.3 223.94 136.923L269.613 33.8688Z"
-        ];
-        const SPRITE = 64;
-        const sprites = STAR_PATHS.flatMap(d => ['#ffffff', 'rgba(255,255,255,0.35)'].map(fill => {
-            const c = document.createElement('canvas');
-            c.width = c.height = SPRITE;
-            const k = c.getContext('2d');
-            k.scale(SPRITE / 459, SPRITE / 459);
-            k.fillStyle = fill;
-            k.fill(new Path2D(d));
-            return c;
-        }));
-
-        const presentSection = document.getElementById('present');
-        const confettiCanvas = presentSection.querySelector('.present-confetti');
-        const cctx = confettiCanvas.getContext('2d');
-        let pieces = [];
-        let frame = null;
-
-        function resizeConfetti() {
-            const b = presentSection.getBoundingClientRect();
-            const dpr = Math.min(window.devicePixelRatio || 1, 2);
-            confettiCanvas.width = b.width * dpr;
-            confettiCanvas.height = b.height * dpr;
-            cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        }
-
-        function popConfetti() {
-            if (reduceMotion) return;
-            const b = presentSection.getBoundingClientRect();
-            resizeConfetti();
-            for (let i = 0; i < 160; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = 3 + Math.random() * 8;
-                pieces.push({
-                    x: b.width * (0.3 + Math.random() * 0.4),
-                    y: b.height * (0.4 + Math.random() * 0.2),
-                    vx: Math.cos(angle) * speed,
-                    vy: Math.sin(angle) * speed - 3,
-                    size: 8 + Math.random() * 14,
-                    rotation: Math.random() * Math.PI,
-                    spin: (Math.random() - 0.5) * 0.16,
-                    sprite: sprites[Math.floor(Math.random() * sprites.length)],
-                    life: 1
-                });
-            }
-            if (!frame) animateConfetti();
-        }
-
-        function animateConfetti() {
-            const b = presentSection.getBoundingClientRect();
-            cctx.clearRect(0, 0, b.width, b.height);
-            pieces = pieces.filter(p => p.life > 0);
-            for (const p of pieces) {
-                p.x += p.vx;
-                p.y += p.vy;
-                p.vy += 0.11;
-                p.vx *= 0.99;
-                p.rotation += p.spin;
-                p.life -= 0.008;
-                cctx.save();
-                cctx.globalAlpha = Math.min(1, p.life * 2);
-                cctx.translate(p.x, p.y);
-                cctx.rotate(p.rotation);
-                cctx.drawImage(p.sprite, -p.size / 2, -p.size / 2, p.size, p.size);
-                cctx.restore();
-            }
-            frame = pieces.length ? requestAnimationFrame(animateConfetti) : null;
-        }
-
-        resizeConfetti();
-        window.addEventListener('resize', resizeConfetti);
-
-        const presentObserver = new IntersectionObserver(entries => {
-            if (entries.some(e => e.isIntersecting)) {
-                presentSection.classList.add('is-visible');
-                popConfetti();
-                presentObserver.disconnect();
-            }
-        }, { root: scroller, threshold: 0.45 });
-        presentObserver.observe(presentSection);
-    </script>
+            </div>
+        </div>
+    </footer>
+    <script src="../theme/mw-site.js"></script>
 </body>
 
 </html>
