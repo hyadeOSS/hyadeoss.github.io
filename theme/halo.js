@@ -8,6 +8,10 @@
     if (canvas) {
         const ctx = canvas.getContext('2d');
         let W, H, dust = [];
+        let INK = '255,255,255';
+        const readInk = () => { INK = getComputedStyle(document.documentElement).getPropertyValue('--mw-ink').trim() || '255,255,255'; };
+        readInk();
+        document.addEventListener('mw-theme', readInk);
 
         const init = () => {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -33,7 +37,7 @@
                     d.x = (d.x + d.vx + W) % W;
                     d.y = (d.y + d.vy + H) % H;
                 }
-                ctx.fillStyle = `rgba(255,255,255,${d.a})`;
+                ctx.fillStyle = `rgba(${INK},${d.a})`;
                 ctx.fillRect(d.x, d.y, d.s, d.s);
             }
             if (!reduceMotion) requestAnimationFrame(draw);

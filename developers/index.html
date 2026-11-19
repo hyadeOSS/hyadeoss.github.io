@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mariowOS - Developer Page</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Poppins:wght@600;700&display=swap"
-        rel="stylesheet">
+    <script src="../theme/accent.js"></script>
+    <script src="../theme/mw-theme.js"></script>
+    <link rel="stylesheet" href="../theme/fonts/fonts.css">
+    <link rel="stylesheet" href="../theme/mw-design.css">
     <link rel="stylesheet" href="../theme/halo.css">
     <style>
         body {
@@ -65,7 +64,7 @@
             gap: 0.9rem;
             padding: 1.2rem 0.55rem;
             border: 1px solid var(--line);
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+            background: linear-gradient(180deg, rgba(var(--mw-ink), 0.05), rgba(var(--mw-ink), 0.01));
         }
 
         .rail::before,
@@ -128,7 +127,7 @@
             content: "";
             width: 1px;
             height: 36px;
-            background: linear-gradient(to bottom, #fff, transparent);
+            background: linear-gradient(to bottom, var(--ink), transparent);
             transform-origin: top;
             animation: scrollLine 2.2s var(--ease) infinite;
         }
@@ -236,12 +235,13 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="../theme/mw-skin.css">
 </head>
 
 <body>
     <canvas class="bg-dust" aria-hidden="true"></canvas>
     <svg class="orbits" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <g fill="none" stroke="#fff">
+        <g fill="none" stroke="currentColor">
             <circle cx="-120" cy="520" r="620" stroke-opacity="0.07" />
             <circle cx="-120" cy="520" r="700" stroke-opacity="0.04" />
             <path d="M 240 0 C 330 300, 330 600, 220 900" stroke-opacity="0.06" />
@@ -318,7 +318,7 @@
             <footer class="site-footer">
                 <div>
                     <div class="signature">mariowstech</div>
-                    <p>Made with <svg style="width:11px; vertical-align:middle; fill:#fff;" viewBox="0 0 24 24"
+                    <p>Made with <svg style="width:11px; vertical-align:middle; fill:currentColor;" viewBox="0 0 24 24"
                             aria-label="love">
                             <path
                                 d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
@@ -394,8 +394,11 @@
             "M98.1534 300.321C100.782 294.908 108.382 294.908 111.01 300.321L131.75 343.038C132.494 344.569 133.744 345.788 135.283 346.477L178.735 365.97C184.431 368.526 184.431 376.736 178.735 379.292L135.283 398.785C133.744 399.474 132.494 400.692 131.75 402.224L111.01 444.94C108.382 450.354 100.782 450.354 98.1534 444.94L77.4139 402.224C76.67 400.692 75.4196 399.474 73.8812 398.785L30.4288 379.292C24.7327 376.736 24.7328 368.526 30.4288 365.97L73.8812 346.477C75.4196 345.788 76.67 344.569 77.4139 343.038L98.1534 300.321Z",
             "M269.613 33.8688C275.108 21.4695 292.44 21.4695 297.935 33.8688L343.608 136.923C345.105 140.3 347.723 143.035 351.005 144.648L450.201 193.399C461.889 199.144 461.889 216.055 450.201 221.799L351.005 270.55C347.723 272.163 345.105 274.898 343.608 278.275L297.935 381.329C292.44 393.729 275.108 393.729 269.613 381.329L223.94 278.275C222.443 274.898 219.825 272.163 216.543 270.55L117.347 221.799C105.659 216.055 105.659 199.144 117.347 193.399L216.543 144.648C219.825 143.035 222.443 140.3 223.94 136.923L269.613 33.8688Z"
         ];
+        let INK = '255,255,255';
+        const readInk = () => { INK = getComputedStyle(document.documentElement).getPropertyValue('--mw-ink').trim() || '255,255,255'; };
+        readInk();
         const SPRITE = 64;
-        const sprites = STAR_PATHS.flatMap(d => ['#ffffff', 'rgba(255,255,255,0.35)'].map(fill => {
+        const makeSprites = () => STAR_PATHS.flatMap(d => [`rgb(${INK})`, `rgba(${INK},0.35)`].map(fill => {
             const c = document.createElement('canvas');
             c.width = c.height = SPRITE;
             const k = c.getContext('2d');
@@ -404,6 +407,8 @@
             k.fill(new Path2D(d));
             return c;
         }));
+        let sprites = makeSprites();
+        document.addEventListener('mw-theme', () => { readInk(); sprites = makeSprites(); });
 
         const presentSection = document.getElementById('present');
         const confettiCanvas = presentSection.querySelector('.present-confetti');
@@ -474,6 +479,7 @@
         }, { root: scroller, threshold: 0.45 });
         presentObserver.observe(presentSection);
     </script>
+    <script src="../theme/mw-site.js"></script>
 </body>
 
 </html>

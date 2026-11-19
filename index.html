@@ -5,19 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mariowOS</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Poppins:wght@500;600;700&display=swap"
-        rel="stylesheet">
+    <script src="theme/accent.js"></script>
+    <script src="theme/mw-theme.js"></script>
+    <link rel="stylesheet" href="theme/fonts/fonts.css">
+    <link rel="stylesheet" href="theme/mw-design.css">
     <style>
         :root {
             --bg: #050505;
             --ink: #f2f2f2;
             --ink-sub: #8d8d8d;
             --ink-dim: #4a4a4a;
-            --line: rgba(255, 255, 255, 0.14);
-            --line-strong: rgba(255, 255, 255, 0.35);
+            --line: rgba(var(--mw-ink), 0.14);
+            --line-strong: rgba(var(--mw-ink), 0.35);
             --ease: cubic-bezier(0.16, 1, 0.3, 1);
             --display: 'JetBrains Mono', ui-monospace, monospace;
             --mono: 'JetBrains Mono', ui-monospace, monospace;
@@ -36,7 +35,7 @@
         }
 
         ::selection {
-            background: #fff;
+            background: var(--ink);
             color: #000;
         }
 
@@ -49,7 +48,7 @@
 
         a:focus-visible,
         button:focus-visible {
-            outline: 1px solid #fff;
+            outline: 1px solid var(--ink);
             outline-offset: 4px;
         }
 
@@ -154,7 +153,7 @@
             border: 1px solid var(--line-strong);
             border-radius: 999px;
             color: var(--ink-sub);
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent);
+            background: linear-gradient(90deg, rgba(var(--mw-ink), 0.08), transparent);
             transition: color 0.4s ease;
         }
 
@@ -295,7 +294,7 @@
             gap: 0.9rem;
             padding: 1.2rem 0.55rem;
             border: 1px solid var(--line);
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+            background: linear-gradient(180deg, rgba(var(--mw-ink), 0.05), rgba(var(--mw-ink), 0.01));
         }
 
         .rail::before,
@@ -462,12 +461,12 @@
 
         /* Scanline / halftone text treatment */
         .scan {
-            background: repeating-linear-gradient(180deg, #fff 0 2px, rgba(255, 255, 255, 0.25) 2px 3px, transparent 3px 4px);
+            background: repeating-linear-gradient(180deg, var(--ink) 0 2px, rgba(var(--mw-ink), 0.25) 2px 3px, transparent 3px 4px);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             color: transparent;
-            filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.25));
+            filter: drop-shadow(0 0 18px rgba(var(--mw-ink), 0.25));
         }
 
         /* ---------- Intro (banner) ---------- */
@@ -550,7 +549,7 @@
             width: clamp(100px, 12vw, 180px);
             z-index: 1;
             transform: translate(-50%, -50%);
-            filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.35)) grayscale(1);
+            filter: drop-shadow(0 0 30px rgba(var(--mw-ink), 0.35)) grayscale(1);
             animation: starPulse 7s ease-in-out infinite;
         }
 
@@ -648,7 +647,7 @@
             content: "";
             width: 1px;
             height: 36px;
-            background: linear-gradient(to bottom, #fff, transparent);
+            background: linear-gradient(to bottom, var(--ink), transparent);
             transform-origin: top;
             animation: scrollLine 2.2s var(--ease) infinite;
         }
@@ -909,18 +908,18 @@
 
         .topo .ring {
             fill: none;
-            stroke: rgba(255, 255, 255, 0.08);
+            stroke: rgba(var(--mw-ink), 0.08);
             vector-effect: non-scaling-stroke;
         }
 
         .topo .mesh {
-            stroke: rgba(255, 255, 255, 0.1);
+            stroke: rgba(var(--mw-ink), 0.1);
             stroke-width: 1;
             vector-effect: non-scaling-stroke;
         }
 
         .topo .link {
-            stroke: rgba(255, 255, 255, 0.45);
+            stroke: rgba(var(--mw-ink), 0.45);
             stroke-width: 1;
             stroke-dasharray: 3 5;
             vector-effect: non-scaling-stroke;
@@ -928,7 +927,7 @@
         }
 
         .topo .packet {
-            fill: #fff;
+            fill: var(--ink);
         }
 
         @keyframes flow {
@@ -966,7 +965,7 @@
             position: absolute;
             width: 7px;
             height: 7px;
-            border: 1px solid #fff;
+            border: 1px solid var(--ink);
         }
 
         .node-box::before {
@@ -992,8 +991,8 @@
         }
 
         .node:hover .node-box {
-            border-color: #fff;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
+            border-color: var(--ink);
+            box-shadow: 0 0 30px rgba(var(--mw-ink), 0.15);
         }
 
         .node:hover .node-box img {
@@ -1012,14 +1011,14 @@
         .node.core .node-box {
             width: 128px;
             height: 128px;
-            border-color: #fff;
-            box-shadow: 0 0 60px rgba(255, 255, 255, 0.08);
+            border-color: var(--ink);
+            box-shadow: 0 0 60px rgba(var(--mw-ink), 0.08);
         }
 
         .node.core .node-box img {
             width: 62px;
             height: 62px;
-            filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.4));
+            filter: drop-shadow(0 0 18px rgba(var(--mw-ink), 0.4));
         }
 
         .node.core .node-label {
@@ -1413,19 +1412,20 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="theme/mw-skin.css">
 </head>
 
 <body>
     <!-- Background -->
     <canvas id="halo-canvas" aria-hidden="true"></canvas>
     <svg class="orbits" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <g fill="none" stroke="#fff">
+        <g fill="none" stroke="currentColor">
             <circle cx="-120" cy="520" r="620" stroke-opacity="0.07" />
             <circle cx="-120" cy="520" r="700" stroke-opacity="0.04" />
             <path d="M 240 0 C 330 300, 330 600, 220 900" stroke-opacity="0.06" />
             <line x1="430" y1="560" x2="560" y2="420" stroke-opacity="0.22" />
         </g>
-        <circle cx="430" cy="560" r="3" fill="#fff" fill-opacity="0.6" />
+        <circle cx="430" cy="560" r="3" fill="currentColor" fill-opacity="0.6" />
     </svg>
     <div class="vignette" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
@@ -1636,7 +1636,7 @@
             <footer class="fade-element">
                 <div>
                     <div class="made signature">mariowstech</div>
-                    <p>Made with <svg style="width:11px; vertical-align:middle; fill:#fff;" viewBox="0 0 24 24"
+                    <p>Made with <svg style="width:11px; vertical-align:middle; fill:currentColor;" viewBox="0 0 24 24"
                             aria-label="love">
                             <path
                                 d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
@@ -1685,11 +1685,15 @@
         const SPIN_UP_MS = 4000;     // the spin eases in from standstill instead of starting at full speed
 
         let W, H, DPR, cx, cy, R, particles = [], dust = [], sprites = [];
+        let INK = '255,255,255';
+        const readInk = () => { INK = getComputedStyle(document.documentElement).getPropertyValue('--mw-ink').trim() || '255,255,255'; };
+        readInk();
+        document.addEventListener('mw-theme', () => { readInk(); if (DPR) buildSprites(); if (reduceMotion && DPR) drawHalo(0); });
         let t0 = null;
 
         // Pre-render each star piece as a bright and a dim sprite
         function buildSprites() {
-            sprites = [0, 1, 2].map(g => ['#ffffff', 'rgba(255,255,255,0.25)'].map(fill => {
+            sprites = [0, 1, 2].map(g => [`rgb(${INK})`, `rgba(${INK},0.25)`].map(fill => {
                 const c = document.createElement('canvas');
                 c.width = c.height = Math.ceil(SPRITE * DPR);
                 const k = c.getContext('2d');
@@ -1769,7 +1773,7 @@
                     d.x = (d.x + d.vx + W) % W;
                     d.y = (d.y + d.vy + H) % H;
                 }
-                ctx.fillStyle = `rgba(255,255,255,${d.a})`;
+                ctx.fillStyle = `rgba(${INK},${d.a})`;
                 ctx.fillRect(d.x, d.y, d.s, d.s);
             }
 
@@ -1891,6 +1895,7 @@
         shuffleBlocks();
         if (!reduceMotion) setInterval(shuffleBlocks, 1400);
     </script>
+    <script src="theme/mw-site.js"></script>
 </body>
 
 </html>
