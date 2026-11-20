@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mariowOS - Developer Docs</title>
+    <title>hyadeOSS - Developer Docs</title>
     <script src="../../theme/accent.js"></script>
     <script src="../../theme/mw-theme.js"></script>
     <link rel="stylesheet" href="../../theme/fonts/fonts.css">
     <link rel="stylesheet" href="../../theme/mw-design.css">
     <meta name="description"
-        content="Build apps for mariowOS: set up the dev environment, create apps with ACode, talk to the shell, and ship them through the Store.">
+        content="Build apps for hyadeOSS: set up the dev environment, create apps with ACode, talk to the shell, and ship them through the Store.">
     <link rel="stylesheet" href="../../theme/halo.css">
     <style>
         html {
@@ -463,8 +463,8 @@
 
     <header class="hud-top">
         <div class="hud-left">
-            <a href="https://mariowos.github.io/" class="brand">
-                <img src="../mariowos-icon.png" alt="mariowOS">
+            <a href="https://hyadeoss.github.io/" class="brand">
+                <img src="../hyadeoss-icon.png" alt="hyadeOSS">
                 <span>// System Archive</span>
                 <span class="ticks" aria-hidden="true"><i></i><i></i><i></i></span>
             </a>
@@ -482,7 +482,7 @@
             <summary>On this page</summary>
             <nav aria-label="Documentation sections">
                 <ol>
-                    <li><a href="#overview"><span>00</span>What is a mariowOS app</a></li>
+                    <li><a href="#overview"><span>00</span>What is a hyadeOSS app</a></li>
                     <li><a href="#setup"><span>01</span>Set up your machine</a></li>
                     <li><a href="#first-app"><span>02</span>Your first app with ACode</a></li>
                     <li><a href="#anatomy"><span>03</span>Anatomy of an app</a></li>
@@ -491,7 +491,7 @@
                     <li><a href="#security"><span>06</span>Security model</a></li>
                     <li><a href="#shipping"><span>07</span>Shipping your app</a></li>
                     <li><a href="#updates"><span>08</span>Updates</a></li>
-                    <li><a href="#translating"><span>09</span>Translating mariowOS</a></li>
+                    <li><a href="#translating"><span>09</span>Translating hyadeOSS</a></li>
                     <li><a href="#reference"><span>10</span>Command reference</a></li>
                     <li><a href="#troubleshooting"><span>11</span>Troubleshooting</a></li>
                 </ol>
@@ -501,20 +501,20 @@
         <main class="content">
             <header class="fade-element">
                 <div class="kicker">Sector DEV — Documentation</div>
-                <h1 class="scan">Build for mariowOS</h1>
+                <h1 class="scan">Build for hyadeOSS</h1>
                 <p class="lede">Everything you need to go from an empty folder to an app in the Store: setting up
-                    mariowOS for development, building with ACode, talking to the desktop, and publishing updates.</p>
+                    hyadeOSS for development, building with ACode, talking to the desktop, and publishing updates.</p>
                 <div class="meta"><span>Applies to: development / stable</span><span>Node.js 22.12+</span></div>
             </header>
 
             <!-- 00 -->
             <section id="overview">
-                <h2><span class="num">00</span>What is a mariowOS app</h2>
-                <p>mariowOS is a web-based OS: an <strong>Electron</strong> shell on top of a local
+                <h2><span class="num">00</span>What is a hyadeOSS app</h2>
+                <p>hyadeOSS is a web-based OS: an <strong>Electron</strong> shell on top of a local
                     <strong>Node.js / Express</strong> backend (the "kernel", <code>server.js</code>). Every app you see
                     on the desktop is a web page.</p>
                 <p>An app is a folder with an <code>index.html</code>. When it's installed it lives in
-                    <code>desktop/apps/&lt;app-id&gt;/</code>, and the desktop opens it inside a window. mariowOS draws
+                    <code>desktop/apps/&lt;app-id&gt;/</code>, and the desktop opens it inside a window. hyadeOSS draws
                     the window frame for you (move, minimize, maximize, close), so your page only has to fill the inside.
                 </p>
                 <p>There are two kinds of apps, and the difference matters for what your code can do:</p>
@@ -531,7 +531,7 @@
                         <tbody>
                             <tr>
                                 <td>System / first-party</td>
-                                <td>Built into the OS, or installed from a <code>mariowOS</code> or
+                                <td>Built into the OS, or installed from a <code>hyadeOSS</code> or
                                     <code>mariowstech</code> GitHub repo</td>
                                 <td>The shell's origin</td>
                                 <td>Yes (<code>fetch('/api/...')</code>)</td>
@@ -560,7 +560,7 @@
                         <div class="code">
                             <div class="code-head"><span>shell</span><button class="copy" type="button">Copy</button>
                             </div>
-                            <pre><code>git clone https://github.com/mariowOS/development
+                            <pre><code>git clone https://github.com/hyadeOSS/development
 cd development</code></pre>
                         </div>
                     </li>
@@ -578,7 +578,7 @@ cd development</code></pre>
                             <pre><code>node node_modules/electron/install.js</code></pre>
                         </div>
                     </li>
-                    <li><strong>Boot mariowOS</strong>
+                    <li><strong>Boot hyadeOSS</strong>
                         <div class="code">
                             <div class="code-head"><span>shell</span><button class="copy" type="button">Copy</button>
                             </div>
@@ -613,27 +613,27 @@ npm run boot:status    <span class="c"># check the current mode</span></code></p
 │   ├── store-catalog.json   <span class="c">local copy of the Store catalog</span>
 │   ├── app-permissions.json <span class="c">per-app endpoint rules</span>
 │   └── desktop/
-│       ├── com.mariowos.desktop.html  <span class="c">the desktop shell</span>
+│       ├── com.hyadeoss.desktop.html  <span class="c">the desktop shell</span>
 │       ├── apps/            <span class="c">one folder per app</span>
 │       └── assets/          <span class="c">shared SDK scripts, icons, locales</span>
 └── package.json</div>
-                <p>The kernel listens on port <code>3000</code> (<code>MARIOWOS_PORT</code>). Third-party apps are
+                <p>The kernel listens on port <code>3000</code> (<code>HYADEOSS_PORT</code>). Third-party apps are
                     served from a second origin on the next port, <code>3001</code> by default
-                    (<code>MARIOWOS_APPS_PORT</code>).</p>
+                    (<code>HYADEOSS_APPS_PORT</code>).</p>
                 <div class="note panel warn">
                     <span class="note-tag">Heads up</span>
                     <p><code>development</code> is not meant to be used as your everyday system. For a daily driver,
-                        use the <a href="https://github.com/mariowOS/stable">stable</a> repository.</p>
+                        use the <a href="https://github.com/hyadeOSS/stable">stable</a> repository.</p>
                 </div>
             </section>
 
             <!-- 02 -->
             <section id="first-app">
                 <h2><span class="num">02</span>Your first app with ACode</h2>
-                <p><strong>ACode</strong> is the mariowOS IDE: a Monaco-based editor with a terminal, live runner,
+                <p><strong>ACode</strong> is the hyadeOSS IDE: a Monaco-based editor with a terminal, live runner,
                     error checker and packer. Install it from the Store, or from the Terminal:</p>
                 <div class="code">
-                    <div class="code-head"><span>mariowOS terminal</span><button class="copy"
+                    <div class="code-head"><span>hyadeOSS terminal</span><button class="copy"
                             type="button">Copy</button></div>
                     <pre><code>get install acode</code></pre>
                 </div>
@@ -644,7 +644,7 @@ npm run boot:status    <span class="c"># check the current mode</span></code></p
                     <li><strong>Create a project</strong>
                         <p>In ACode press <code>Ctrl</code> <code>Alt</code> <code>N</code>, or from the Terminal:</p>
                         <div class="code">
-                            <div class="code-head"><span>mariowOS terminal</span><button class="copy"
+                            <div class="code-head"><span>hyadeOSS terminal</span><button class="copy"
                                     type="button">Copy</button></div>
                             <pre><code>acode new myapp -t app</code></pre>
                         </div>
@@ -653,7 +653,7 @@ npm run boot:status    <span class="c"># check the current mode</span></code></p
                         <p>Press <strong>Run</strong> (<code>Ctrl</code> <code>Enter</code>) in ACode. It opens your app in
                             a preview window and shows its errors live. In the Terminal:</p>
                         <div class="code">
-                            <div class="code-head"><span>mariowOS terminal</span><button class="copy"
+                            <div class="code-head"><span>hyadeOSS terminal</span><button class="copy"
                                     type="button">Copy</button></div>
                             <pre><code>cd ~/ACode/myapp
 acode run</code></pre>
@@ -666,7 +666,7 @@ acode run</code></pre>
                     </li>
                     <li><strong>Install it on your system</strong>
                         <div class="code">
-                            <div class="code-head"><span>mariowOS terminal</span><button class="copy"
+                            <div class="code-head"><span>hyadeOSS terminal</span><button class="copy"
                                     type="button">Copy</button></div>
                             <pre><code>acode install myapp</code></pre>
                         </div>
@@ -695,7 +695,7 @@ acode run</code></pre>
                             </tr>
                             <tr>
                                 <td><code>system</code></td>
-                                <td>An app that talks to mariowOS: shows storage use
+                                <td>An app that talks to hyadeOSS: shows storage use
                                     (<code>/api/system/storage</code>) and Wi-Fi networks
                                     (<code>/api/system/networks</code>).</td>
                             </tr>
@@ -707,7 +707,7 @@ acode run</code></pre>
                 <ul>
                     <li><strong>Keep the <code>body</code> background transparent</strong> to get the system's glass
                         effect behind your window.</li>
-                    <li><strong>Don't draw your own title bar.</strong> mariowOS draws the window frame and its buttons.
+                    <li><strong>Don't draw your own title bar.</strong> hyadeOSS draws the window frame and its buttons.
                     </li>
                     <li><strong>Same-origin system APIs work in the preview</strong>, e.g.
                         <code>fetch('/api/system/networks')</code>. Remember they won't be reachable once your app
@@ -821,11 +821,11 @@ document.getElementById("quit").addEventListener("click", () => {
 
                 <h3>Dialogs: mDialog</h3>
                 <p>Native <code>alert</code>/<code>confirm</code>/<code>prompt</code> steal keyboard focus in Electron on
-                    Windows and don't match the OS. <code>mariowos-dialogs.js</code> replaces them with in-page dialogs
+                    Windows and don't match the OS. <code>hyadeoss-dialogs.js</code> replaces them with in-page dialogs
                     that return Promises (and restyles legacy <code>alert()</code> calls too).</p>
                 <div class="code">
                     <div class="code-head"><span>html + js</span><button class="copy" type="button">Copy</button></div>
-                    <pre><code>&lt;script src="/desktop/assets/mariowos-dialogs.js"&gt;&lt;/script&gt;
+                    <pre><code>&lt;script src="/desktop/assets/hyadeoss-dialogs.js"&gt;&lt;/script&gt;
 
 await mDialog.alert("Saved!");                                  <span class="c">// undefined</span>
 const ok = await mDialog.confirm("Delete it?");                 <span class="c">// true / false</span>
@@ -880,9 +880,9 @@ const pw = await mDialog.prompt("Password:", { type: "password" }); <span class=
                     <li><strong>In HTML:</strong> <code>data-i18n</code> for text, and
                         <code>data-i18n-placeholder</code> / <code>-title</code> / <code>-aria-label</code> for
                         attributes. Elements added later are translated automatically.</li>
-                    <li><strong>In scripts:</strong> <code>mariowOSI18n.t("key", "English text")</code>, or with
-                        values <code>mariowOSI18n.t("key", "Hello {name}", { name })</code>.</li>
-                    <li><strong>Dates and numbers:</strong> pass <code>mariowOSI18n.locale</code> to
+                    <li><strong>In scripts:</strong> <code>hyadeOSSI18n.t("key", "English text")</code>, or with
+                        values <code>hyadeOSSI18n.t("key", "Hello {name}", { name })</code>.</li>
+                    <li><strong>Dates and numbers:</strong> pass <code>hyadeOSSI18n.locale</code> to
                         <code>toLocaleString</code> / <code>Intl</code>.</li>
                 </ul>
 
@@ -929,7 +929,7 @@ const pw = await mDialog.prompt("Password:", { type: "password" }); <span class=
                 <h2><span class="num">06</span>Security model</h2>
                 <p>Knowing these rules up front saves you from "why doesn't my fetch work" moments.</p>
                 <h3>Third-party apps are isolated</h3>
-                <p>An app installed from a GitHub owner other than <code>mariowOS</code> / <code>mariowstech</code>, or
+                <p>An app installed from a GitHub owner other than <code>hyadeOSS</code> / <code>mariowstech</code>, or
                     sideloaded from your home folder, runs on its own origin instead of as a same-origin iframe. The
                     browser keeps it away from the shell's page, cookies and storage, and:</p>
                 <ul>
@@ -961,7 +961,7 @@ const pw = await mDialog.prompt("Password:", { type: "password" }); <span class=
                 <p>Install a folder with an <code>index.html</code> (or a single <code>.html</code> file) from your home
                     folder. An <code>icon.png</code> next to <code>index.html</code> becomes the icon.</p>
                 <div class="code">
-                    <div class="code-head"><span>mariowOS terminal</span><button class="copy"
+                    <div class="code-head"><span>hyadeOSS terminal</span><button class="copy"
                             type="button">Copy</button></div>
                     <pre><code>store add ~/Projects/my-app --title "My App"
 store add page.html --id notes2</code></pre>
@@ -972,17 +972,17 @@ store add page.html --id notes2</code></pre>
                     A raw <code>.html</code> file on <code>raw.githubusercontent.com</code> is saved as the app's
                     <code>index.html</code>.</p>
                 <div class="code">
-                    <div class="code-head"><span>mariowOS terminal</span><button class="copy"
+                    <div class="code-head"><span>hyadeOSS terminal</span><button class="copy"
                             type="button">Copy</button></div>
                     <pre><code>store add https://github.com/you/my-app</code></pre>
                 </div>
 
                 <h3>C. List it in the Store</h3>
                 <p>The Store shows a catalog that merges the official remote list from
-                    <a href="https://github.com/mariowOS/store-catalog">mariowOS/store-catalog</a> with the local
+                    <a href="https://github.com/hyadeOSS/store-catalog">hyadeOSS/store-catalog</a> with the local
                     <code>store-catalog.json</code>. To add your app to your own machine's Store:</p>
                 <div class="code">
-                    <div class="code-head"><span>mariowOS terminal</span><button class="copy"
+                    <div class="code-head"><span>hyadeOSS terminal</span><button class="copy"
                             type="button">Copy</button></div>
                     <pre><code>store publish my-app https://github.com/you/my-app --desc "Does things" --dev "you"</code></pre>
                 </div>
@@ -1041,7 +1041,7 @@ store add page.html --id notes2</code></pre>
 
             <!-- 09 -->
             <section id="translating">
-                <h2><span class="num">09</span>Translating mariowOS</h2>
+                <h2><span class="num">09</span>Translating hyadeOSS</h2>
                 <p>Every language is one JSON file in <code>desktop/assets/locales/</code>, and a partial translation is
                     fine: anything missing stays in English. No code changes are needed.</p>
                 <ol class="steps">
@@ -1229,7 +1229,7 @@ node tools/check-locales.js --missing fr <span class="c"># what's left to transl
                     <div class="btn-group">
                         <a href="https://discord.gg/QxjDUeQGMu" class="btn btn-primary">Ask on Discord <span
                                 class="btn-arrow">&rarr;</span></a>
-                        <a href="https://github.com/mariowOS/development" class="btn">Browse the source</a>
+                        <a href="https://github.com/hyadeOSS/development" class="btn">Browse the source</a>
                     </div>
                 </div>
             </section>
@@ -1258,7 +1258,7 @@ node tools/check-locales.js --missing fr <span class="c"># what's left to transl
             </ul>
         </div>
         <div class="footer-right">
-            <a href="https://mariowos.github.io/security">Security bulletins</a>
+            <a href="https://hyadeoss.github.io/security">Security bulletins</a>
             <a href="#">Join beta</a>
         </div>
     </footer>
