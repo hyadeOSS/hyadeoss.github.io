@@ -1,4 +1,4 @@
-// hyadeOSS "Black Halo" theme — shared behaviour for the subpages:
+// hyadeOS "Black Halo" theme — shared behaviour for the subpages:
 // drifting background dust and fade-in on scroll.
 (() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

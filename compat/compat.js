@@ -1,4 +1,4 @@
-// hyadeOSS compatibility check: turns what a browser can see about a PC into an estimate.
+// hyadeOS compatibility check: turns what a browser can see about a PC into an estimate.
 // No network, no storage: everything here is a pure function of the signals it is given,
 // so it can be tested in Node (see the end of the file) and runs the same in the page.
 //
@@ -29,14 +29,14 @@
       var modern = nt[1] === '10.0';
       return {
         family: 'windows', name: name, supported: modern,
-        note: modern ? '' : 'Recent Electron, which hyadeOSS runs on, needs Windows 10 or later.'
+        note: modern ? '' : 'Recent Electron, which hyadeOS runs on, needs Windows 10 or later.'
       };
     }
     if (/Android|iPhone|iPad|iPod/.test(ua)) {
       return { family: 'mobile', name: 'Phone or tablet', supported: false, note: 'This looks like a phone or tablet. Open this page on the old PC.' };
     }
     if (/CrOS/.test(ua)) {
-      return { family: 'chromeos', name: 'ChromeOS', supported: false, note: 'ChromeOS cannot run hyadeOSS.' };
+      return { family: 'chromeos', name: 'ChromeOS', supported: false, note: 'ChromeOS cannot run hyadeOS.' };
     }
     if (/Mac OS X|Macintosh/.test(ua)) return { family: 'macos', name: 'macOS', supported: true, note: '' };
     if (/Linux|X11/.test(ua)) return { family: 'linux', name: 'Linux', supported: true, note: '' };
@@ -96,9 +96,9 @@
 
     var verdict;
     if (os.supported === false) {
-      verdict = { id: 'blocked', title: 'Not on this system yet', text: 'hyadeOSS needs Windows 10 or later, or a recent Linux or macOS.' };
+      verdict = { id: 'blocked', title: 'Not on this system yet', text: 'hyadeOS needs Windows 10 or later, or a recent Linux or macOS.' };
     } else if (score >= 85) {
-      verdict = { id: 'reborn', title: 'Reborn', text: 'This PC can run hyadeOSS comfortably, whatever role you give it.' };
+      verdict = { id: 'reborn', title: 'Reborn', text: 'This PC can run hyadeOS comfortably, whatever role you give it.' };
     } else if (score >= 60) {
       verdict = { id: 'alive', title: 'Alive and useful', text: 'Good for a shared PC, a family PC or a TV box.' };
     } else if (score >= 40) {
@@ -112,7 +112,7 @@
     if (gpu.hardware === false) warnings.push('Your browser is not using the graphics card. Updating the graphics driver can change this result a lot.');
     if (mem === null) warnings.push('Your browser hides the memory, so that part of the score is a guess. Chrome or Edge show it.');
     if (mem !== null && mem >= 8) warnings.push('Browsers report at most 8 GB, so the real memory may be higher.');
-    if (signals.bitness === '32') warnings.push('A 32-bit system was detected. hyadeOSS is built for 64-bit systems.');
+    if (signals.bitness === '32') warnings.push('A 32-bit system was detected. hyadeOS is built for 64-bit systems.');
 
     return { score: score, verdict: verdict, factors: factors, roles: roles(os, mem, cores, gpu), warnings: warnings };
   }

@@ -1,7 +1,7 @@
 If you take anything from here please give credits, thanks.
 
 # Links
-[Website](https://hyadeoss.github.io)
+[Website](https://hyadeos.github.io)
 
 [Landpages and network resources](https://github.com/mariowstech/mariowOS-landpages)
 

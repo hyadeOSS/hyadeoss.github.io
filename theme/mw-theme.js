@@ -1,5 +1,5 @@
-// hyadeOSS light/dark theme for the website, same contract as desktop/assets/mw-theme.js
-// (see docs/design.md in hyadeOSS/stable): <html data-theme="dark|light">, the choice
+// hyadeOS light/dark theme for the website, same contract as desktop/assets/mw-theme.js
+// (see docs/design.md in hyadeOS/stable): <html data-theme="dark|light">, the choice
 // ("dark", "light" or "auto") is cached in localStorage["mwTheme"] and every open page follows it.
 // Load it in <head>, before any stylesheet, so the first paint is already in the right theme.
 (function () {
@@ -34,5 +34,5 @@
     if (media.addEventListener) media.addEventListener('change', follow); else if (media.addListener) media.addListener(follow);
   }
 
-  window.hyadeOSSTheme = { get: () => current, resolved: () => resolve(current), set, apply };
+  window.hyadeOSTheme = { get: () => current, resolved: () => resolve(current), set, apply };
 })();
