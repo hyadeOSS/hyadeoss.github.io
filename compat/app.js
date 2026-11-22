@@ -1,11 +1,11 @@
-// hyadeOSS compatibility check: reads what the browser tells about this PC, scores it with
+// hyadeOS compatibility check: reads what the browser tells about this PC, scores it with
 // compat.js and draws the result. Nothing leaves the page: there is no request, no storage
 // and no analytics here.
 (function () {
   'use strict';
 
   var C = window.HyadeCompat;
-  var PAGE_URL = 'https://hyadeoss.github.io/compat/';
+  var PAGE_URL = 'https://hyadeos.github.io/compat/';
   var lastResult = null;
 
   function $(id) { return document.getElementById(id); }
@@ -96,7 +96,7 @@
   }
 
   function shareText() {
-    return 'My old PC scored ' + lastResult.score + '/100 on the hyadeOSS compatibility check: "' +
+    return 'My old PC scored ' + lastResult.score + '/100 on the hyadeOS compatibility check: "' +
       lastResult.verdict.title + '". Try yours: ' + PAGE_URL;
   }
 
@@ -143,7 +143,7 @@
 
     g.fillStyle = accent;
     g.font = '600 30px ' + font;
-    g.fillText('hyadeoss.github.io/compat', 70, 580);
+    g.fillText('hyadeos.github.io/compat', 70, 580);
     return canvas;
   }
 
@@ -173,7 +173,7 @@
       var url = URL.createObjectURL(blob);
       var link = document.createElement('a');
       link.href = url;
-      link.download = 'hyadeoss-compatibility.png';
+      link.download = 'hyadeos-compatibility.png';
       document.body.appendChild(link);
       link.click();
       link.remove();

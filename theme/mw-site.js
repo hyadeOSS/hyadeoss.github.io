@@ -1,4 +1,4 @@
-// hyadeOSS website: adds the theme switch (Dark → Light → Automatic) next to the social icons.
+// hyadeOS website: adds the theme switch (Dark → Light → Automatic) next to the social icons.
 // The theme itself is handled by mw-theme.js; the colors come from mw-design.css and mw-skin.css.
 (() => {
   const ICONS = {
@@ -9,17 +9,17 @@
   const NEXT = { dark: 'light', light: 'auto', auto: 'dark' };
   const NAME = { dark: 'Dark', light: 'Light', auto: 'Automatic' };
   const host = document.querySelector('.hud-right, .hud-tr');
-  if (!host || !window.hyadeOSSTheme) return;
+  if (!host || !window.hyadeOSTheme) return;
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'mw-theme-btn';
   const sync = () => {
-    const c = window.hyadeOSSTheme.get();
+    const c = window.hyadeOSTheme.get();
     btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[c] + '</svg>';
     btn.title = 'Appearance: ' + NAME[c];
     btn.setAttribute('aria-label', 'Appearance: ' + NAME[c] + '. Click to change.');
   };
-  btn.addEventListener('click', () => window.hyadeOSSTheme.set(NEXT[window.hyadeOSSTheme.get()]));
+  btn.addEventListener('click', () => window.hyadeOSTheme.set(NEXT[window.hyadeOSTheme.get()]));
   document.addEventListener('mw-theme', sync);
   sync();
   host.appendChild(btn);
