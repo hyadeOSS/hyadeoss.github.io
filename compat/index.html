@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hyadeOSS - Can your old PC live again?</title>
+    <meta name="description" content="Find out in ten seconds if your old PC can run hyadeOSS. It runs in your browser: nothing is sent anywhere.">
+    <meta property="og:title" content="Can your old PC live again?">
+    <meta property="og:description" content="A ten-second check that runs in your browser. Nothing is sent anywhere.">
+    <script src="../theme/accent.js"></script>
+    <script src="../theme/mw-theme.js"></script>
+    <link rel="stylesheet" href="../theme/fonts/fonts.css">
+    <link rel="stylesheet" href="../theme/mw-design.css">
+    <link rel="stylesheet" href="../theme/halo.css">
+    <style>
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            position: relative;
+            z-index: 10;
+            flex: 1 0 auto;
+            width: 100%;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 8.5rem var(--gutter) 4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.6rem;
+        }
+
+        .hero {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero h1 { margin-bottom: 1.4rem; }
+        .hero .lead { max-width: 58ch; margin-bottom: 2rem; line-height: 1.7; color: var(--ink-sub); }
+        .hero .btn-primary { padding: 1.15rem 2.4rem; font-size: 0.85rem; }
+        .fine-print { margin-top: 1.2rem; max-width: 62ch; font-size: 0.72rem; line-height: 1.7; color: var(--ink-sub); }
+
+        [hidden] { display: none !important; }
+
+        /* Result */
+        .summary {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 2.4rem;
+            align-items: center;
+        }
+
+        .ring {
+            --pct: 0;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background:
+                radial-gradient(closest-side, var(--bg, #050505) 78%, transparent 80% 100%),
+                conic-gradient(var(--mw-accent, #0a84ff) calc(var(--pct) * 1%), rgba(var(--mw-ink, 255, 255, 255), 0.12) 0);
+        }
+
+        .ring .score { font-size: 3.4rem; font-weight: 700; line-height: 1; text-align: center; }
+        .ring .score small { display: block; margin-top: 0.4rem; font-size: 0.8rem; font-weight: 500; color: var(--ink-sub); }
+
+        #verdict-title { font-size: 1.7rem; margin-bottom: 0.6rem; outline: none; }
+        #verdict-text { line-height: 1.7; color: var(--ink-sub); }
+
+        .block h2 { font-size: 0.95rem; margin-bottom: 1.1rem; }
+
+        .factor {
+            display: grid;
+            grid-template-columns: 7rem 1fr 9rem;
+            gap: 1rem;
+            align-items: center;
+            padding: 0.7rem 0;
+            border-top: 1px solid var(--line);
+            font-size: 0.8rem;
+        }
+
+        .factor-name { font-weight: 700; }
+        .factor-value { color: var(--ink-sub); overflow-wrap: anywhere; }
+
+        .bar { display: block; height: 6px; border-radius: 3px; background: rgba(var(--mw-ink, 255, 255, 255), 0.12); overflow: hidden; }
+        .bar i { display: block; height: 100%; background: var(--mw-accent, #0a84ff); }
+
+        .roles { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .role { padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 12px; }
+        .role p { margin-top: 0.5rem; font-size: 0.76rem; line-height: 1.6; color: var(--ink-sub); }
+        .role-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 0.82rem; }
+        .role.fit-poor { opacity: 0.55; }
+
+        .tag { padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid var(--line-strong); }
+        .tag-today { background: var(--mw-accent-soft, rgba(10, 132, 255, 0.18)); border-color: var(--mw-accent-line, rgba(10, 132, 255, 0.55)); }
+        .tag-fit { margin-left: auto; }
+
+        .warnings { margin-left: 1.1rem; display: grid; gap: 0.5rem; font-size: 0.78rem; line-height: 1.6; color: var(--ink-sub); }
+
+        .share-row { display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; }
+        #share-status { font-size: 0.74rem; color: var(--ink-sub); overflow-wrap: anywhere; }
+
+        .how { display: grid; gap: 0.7rem; font-size: 0.78rem; line-height: 1.7; color: var(--ink-sub); }
+
+        @media (max-width: 900px) {
+            main { padding-top: 6rem; gap: 2rem; }
+            .summary { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+            .factor { grid-template-columns: 1fr; gap: 0.3rem; }
+            .roles { grid-template-columns: 1fr; }
+        }
+    </style>
+    <link rel="stylesheet" href="../theme/mw-skin.css">
+</head>
+
+<body>
+    <canvas class="bg-dust" aria-hidden="true"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="hud-top">
+        <div class="hud-left">
+            <a href="https://hyadeoss.github.io/" class="brand">
+                <img src="../images/hyadeoss-icon.png" alt="hyadeOSS">
+                <span>// System Archive</span>
+                <span class="ticks" aria-hidden="true"><i></i><i></i><i></i></span>
+            </a>
+            <span class="chip">Archive / CK — Compatibility</span>
+        </div>
+        <div class="hud-right">
+            <span class="dot-line" aria-hidden="true"><span></span></span>
+            <span class="slogan">Fast • Smooth • Open • Yours</span>
+            <nav class="socials" aria-label="Community">
+                <a href="https://github.com/hyadeOSS/" target="_blank" rel="noopener"><img src="../images/github.webp"
+                        alt="GitHub"></a>
+                <a href="https://discord.gg/QxjDUeQGMu" target="_blank" rel="noopener"><img
+                        src="../images/discord.webp" alt="Discord"></a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="kicker center">Sector CK — Compatibility</div>
+            <h1>Can your old PC<span class="big-word scan">live again?</span></h1>
+            <p class="lead">Find out in ten seconds if this computer can run hyadeOSS, and what it could become:
+                a shared PC, a TV box, a PC for grandparents. Open this page on the old PC.</p>
+            <div class="btn-group">
+                <button type="button" id="check" class="btn btn-primary">Check this PC</button>
+            </div>
+            <p class="fine-print">The check runs entirely in your browser. Nothing is sent anywhere and nothing is
+                stored.</p>
+            <noscript><p class="fine-print">This check needs JavaScript, and only uses it inside your browser.</p></noscript>
+        </section>
+
+        <div id="result" hidden aria-live="polite">
+            <section class="panel summary">
+                <div class="ring" id="ring"><div class="score"><span id="score">0</span><small>/ 100</small></div></div>
+                <div>
+                    <h2 id="verdict-title" tabindex="-1"></h2>
+                    <p id="verdict-text"></p>
+                </div>
+            </section>
+
+            <section class="panel block" style="margin-top:1.5rem">
+                <h2>What we saw</h2>
+                <div id="factors"></div>
+            </section>
+
+            <section class="panel block" style="margin-top:1.5rem">
+                <h2>What it could become</h2>
+                <ul class="roles" id="roles"></ul>
+            </section>
+
+            <section class="panel block" style="margin-top:1.5rem" id="warnings-box" hidden>
+                <h2>Good to know</h2>
+                <ul class="warnings" id="warnings"></ul>
+            </section>
+
+            <section class="panel block" style="margin-top:1.5rem">
+                <h2>Share the result</h2>
+                <div class="share-row">
+                    <button type="button" id="share" class="btn btn-primary">Share</button>
+                    <button type="button" id="save-image" class="btn">Save image</button>
+                    <a href="../get/index.html" class="btn">Download hyadeOSS</a>
+                    <span id="share-status" role="status"></span>
+                </div>
+                <p class="fine-print">The image and the text hold only the score and the verdict, not your hardware.</p>
+            </section>
+        </div>
+
+        <section class="panel block how">
+            <h2>How accurate is this?</h2>
+            <p>It is an estimate. A web page cannot see your exact memory (browsers round it and stop at 8 GB), your
+                processor model or your TPM. We combine what it can see: memory, processor threads, whether the
+                graphics card is in use, and the system.</p>
+            <p>Roles marked <strong>Planned</strong> are not in hyadeOSS yet. The shared or kids PC works today
+                with the guest account and time limits. For a real answer, <a href="../get/index.html">try hyadeOSS</a>
+                on the machine.</p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div>
+            <div class="signature">mariowstech</div>
+            <p>Made with <svg style="width:11px; vertical-align:middle; fill:currentColor;" viewBox="0 0 24 24"
+                    aria-label="love">
+                    <path
+                        d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg> by</p>
+        </div>
+        <div class="footer-lists">
+            <ul>
+                <li>@davidjone16</li>
+                <li>@erti</li>
+                <li>@kevadesu</li>
+            </ul>
+            <ul>
+                <li>@kianish</li>
+                <li>@diegoolivaa</li>
+                <li>and you!</li>
+            </ul>
+        </div>
+        <div class="footer-right">
+            <a href="https://hyadeoss.github.io/security">Security bulletins</a>
+            <a href="#">Join beta</a>
+        </div>
+    </footer>
+
+    <script src="compat.js"></script>
+    <script src="app.js"></script>
+    <script src="../theme/halo.js"></script>
+    <script src="../theme/mw-site.js"></script>
+</body>
+
+</html>
